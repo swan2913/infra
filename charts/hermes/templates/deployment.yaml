@@ -13,6 +13,15 @@ spec:
       labels:
         app: hermes
     spec:
+      initContainers:
+        - name: init-config
+          image: busybox
+          command: ['sh', '-c', 'cp /etc/hermes-config/config.yaml /opt/data/config.yaml && echo "Config copied."']
+          volumeMounts:
+            - name: config-template
+              mountPath: /etc/hermes-config
+            - name: data
+              mountPath: /opt/data
       containers:
         - name: hermes
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
@@ -39,9 +48,6 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /opt/data
-            - name: config
-              mountPath: /opt/data/config.yaml
-              subPath: config.yaml
       volumes:
         - name: data
           {{- if .Values.persistence.enabled }}
@@ -50,6 +56,6 @@ spec:
           {{- else }}
           emptyDir: {}
           {{- end }}
-        - name: config
+        - name: config-template
           configMap:
             name: hermes-config
