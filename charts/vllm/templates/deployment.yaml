@@ -13,6 +13,8 @@ spec:
       labels:
         app: vllm
     spec:
+      # k8s 서비스 디스커버리 env var 주입 방지 (VLLM_PORT 충돌 방지)
+      enableServiceLinks: false
       # GPU 워커 노드에만 스케줄
       nodeSelector:
         nvidia.com/gpu.present: "true"
