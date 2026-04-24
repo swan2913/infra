@@ -37,8 +37,8 @@ spec:
                 exit 0
               fi
               pip install -q huggingface_hub && \
-              huggingface-cli download {{ .Values.model.repo }} {{ .Values.model.file }} \
-                --local-dir /models --local-dir-use-symlinks False
+              hf download {{ .Values.model.repo }} {{ .Values.model.file }} \
+                --local-dir /models
           env:
             - name: HF_TOKEN
               valueFrom:
