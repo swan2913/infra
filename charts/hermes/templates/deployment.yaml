@@ -17,7 +17,7 @@ spec:
         - name: hermes
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          command: ["hermes", "gateway", "run"]
+          args: ["gateway", "run"]
           env:
             - name: HERMES_HOME
               value: /opt/data
