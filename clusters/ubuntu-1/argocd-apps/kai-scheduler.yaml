@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: ghcr.io/nvidia/kai-scheduler
     chart: kai-scheduler
-    targetRevision: "*"
+    targetRevision: v0.5.4
   destination:
     server: https://kubernetes.default.svc
     namespace: kai-scheduler
