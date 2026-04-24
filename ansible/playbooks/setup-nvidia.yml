@@ -1,6 +1,6 @@
 ---
 - name: NVIDIA Driver + Container Toolkit 설치
-  hosts: control_plane
+  hosts: workers
   become: true
   vars:
     nvidia_driver: nvidia-driver-580-open

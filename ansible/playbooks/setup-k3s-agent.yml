@@ -12,9 +12,6 @@
       register: k3s_token
       changed_when: false
 
-    - name: NVIDIA 드라이버 + Container Toolkit 설치
-      include_tasks: ../tasks/nvidia.yml
-
     - name: k3s agent 설치
       shell: |
         curl -sfL https://get.k3s.io | \

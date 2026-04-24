@@ -58,9 +58,10 @@
 - [x] PVE-003 · PCI Resource Mapping `rtx3080` 생성 (iommugroup=16)
 - [x] PVE-003 · TerraformRole에 `Mapping.Use` 권한 추가
 - [x] PVE-003 · root SSH 키 인증 설정 (Terraform SSH 작업용)
-- [ ] GPU-003 · VM 101 NVIDIA 드라이버 설치 (Ansible)
-- [ ] K8S-002 · VM 101 k3s agent 조인 (Ansible)
-- [ ] K8S-002 · 멀티 노드 확인 (`kubectl get nodes`)
+- [x] GPU-003 · VM 101 NVIDIA 드라이버 580-open 설치 (Ansible)
+- [x] GPU-003 · GPU Operator가 worker-gpu 자동 감지 → nvidia.com/gpu:1 노출
+- [x] K8S-002 · VM 101 k3s agent 조인 (Ansible)
+- [x] K8S-002 · 멀티 노드 확인 (ubuntu-1: control-plane / worker-gpu: Ready)
 - [ ] ML-001 · vLLM ArgoCD App Sync (Gemma 3 4B)
 - [ ] ML-001 · 모델 로드 확인 (`/health` endpoint)
 - [ ] ML-001 · OpenAI API 호환 테스트
