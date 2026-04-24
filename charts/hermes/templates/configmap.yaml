@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hermes-config
+  namespace: {{ .Release.Namespace }}
+data:
+  config.yaml: |
+    providers:
+      main:
+        api: local
+        url: {{ .Values.vllm.baseUrl }}
+        model: {{ .Values.vllm.model }}

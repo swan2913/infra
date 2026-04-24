@@ -13,10 +13,12 @@ resources:
     nvidia.com/gpu: "1"
 
 extraArgs:
-  - "--max-model-len=auto"
+  - "--max-model-len=1000000"
   - "--reasoning-parser=qwen3"
   - "--language-model-only"
   - "--tensor-parallel-size=1"
+  - "--enable-auto-tool-choice"
+  - "--tool-call-parser=hermes"
 
 persistence:
   enabled: true
