@@ -29,6 +29,13 @@ spec:
             - "--max-model-len={{ .Values.maxModelLen }}"
             - "--port={{ .Values.port }}"
             - "--host=0.0.0.0"
+          env:
+            - name: HF_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: hf-token
+                  key: token
+                  optional: true
           ports:
             - containerPort: {{ .Values.port }}
           resources:
