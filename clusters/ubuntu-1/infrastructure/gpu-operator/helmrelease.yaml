@@ -1,0 +1,25 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: gpu-operator
+  namespace: gpu-operator
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: gpu-operator
+      sourceRef:
+        kind: HelmRepository
+        name: nvidia
+        namespace: gpu-operator
+      interval: 12h
+  values:
+    # 드라이버/툴킷은 VM에 직접 설치되어 있으므로 비활성화
+    driver:
+      enabled: false
+    toolkit:
+      enabled: false
+    devicePlugin:
+      enabled: true
+    dcgmExporter:
+      enabled: true

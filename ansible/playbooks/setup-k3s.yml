@@ -1,0 +1,33 @@
+---
+- name: k3s Control Plane 설치
+  hosts: control_plane
+  become: true
+
+  tasks:
+    - name: k3s 설치 (traefik 제외)
+      shell: |
+        curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC='server --disable traefik' sh -
+      args:
+        creates: /usr/local/bin/k3s
+
+    - name: kubeconfig 사용자 홈에 복사
+      block:
+        - file:
+            path: /home/ubuntu/.kube
+            state: directory
+            owner: ubuntu
+            mode: '0755'
+        - copy:
+            src: /etc/rancher/k3s/k3s.yaml
+            dest: /home/ubuntu/.kube/config
+            remote_src: true
+            owner: ubuntu
+            mode: '0600'
+
+    - name: kubectl 확인
+      command: k3s kubectl get nodes
+      register: nodes
+      changed_when: false
+
+    - debug:
+        var: nodes.stdout_lines

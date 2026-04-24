@@ -1,0 +1,47 @@
+---
+- name: NVIDIA Driver + Container Toolkit 설치
+  hosts: control_plane
+  become: true
+  vars:
+    nvidia_driver: nvidia-driver-580-open
+
+  tasks:
+    - name: 빌드 도구 설치
+      apt:
+        name:
+          - linux-headers-{{ ansible_kernel }}
+          - build-essential
+          - dkms
+          - ubuntu-drivers-common
+        state: present
+        update_cache: true
+
+    - name: NVIDIA 드라이버 설치
+      apt:
+        name: "{{ nvidia_driver }}"
+        state: present
+
+    - name: NVIDIA Container Toolkit GPG 키 등록
+      shell: |
+        curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | \
+          gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg
+      args:
+        creates: /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg
+
+    - name: NVIDIA Container Toolkit 저장소 추가
+      shell: |
+        curl -s -L https://nvidia.github.io/libnvidia-container/stable/deb/nvidia-container-toolkit.list | \
+          sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \
+          tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
+      args:
+        creates: /etc/apt/sources.list.d/nvidia-container-toolkit.list
+
+    - name: NVIDIA Container Toolkit 설치
+      apt:
+        name: nvidia-container-toolkit
+        state: present
+        update_cache: true
+
+    - name: 재부팅
+      reboot:
+        reboot_timeout: 120
