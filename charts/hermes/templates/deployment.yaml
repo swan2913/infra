@@ -16,7 +16,7 @@ spec:
       initContainers:
         - name: init-config
           image: busybox
-          command: ['sh', '-c', 'cp /etc/hermes-config/config.yaml /opt/data/config.yaml && echo "Config copied."']
+          command: ['sh', '-c', 'cp /etc/hermes-config/config.yaml /opt/data/config.yaml && chown 10000:10000 /opt/data/config.yaml && echo "Config ready."']
           volumeMounts:
             - name: config-template
               mountPath: /etc/hermes-config
