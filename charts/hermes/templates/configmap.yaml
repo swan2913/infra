@@ -5,8 +5,10 @@ metadata:
   namespace: {{ .Release.Namespace }}
 data:
   config.yaml: |
-    providers:
-      main:
-        api: local
-        url: {{ .Values.vllm.baseUrl }}
-        model: {{ .Values.vllm.model }}
+    model:
+      default: {{ .Values.vllm.model | quote }}
+      provider: "custom"
+      base_url: {{ .Values.vllm.baseUrl | quote }}
+    custom_providers:
+      - name: "vllm"
+        base_url: {{ .Values.vllm.baseUrl | quote }}
