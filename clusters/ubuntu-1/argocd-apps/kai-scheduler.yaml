@@ -8,9 +8,9 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: ghcr.io/nvidia/kai-scheduler
-    chart: kai-scheduler
-    targetRevision: v0.5.4
+    repoURL: git@github.com:swan2913/infra.git
+    targetRevision: main
+    path: charts/kai-scheduler
   destination:
     server: https://kubernetes.default.svc
     namespace: kai-scheduler

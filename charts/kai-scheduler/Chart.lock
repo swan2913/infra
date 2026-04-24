@@ -1,0 +1,6 @@
+dependencies:
+- name: kai-scheduler
+  repository: oci://ghcr.io/nvidia/kai-scheduler
+  version: v0.5.4
+digest: sha256:54f82180a58c13225ae9ad8a87523fd8160de4e47d8c9cd4e02c67d5854c6854
+generated: "2026-04-24T18:26:50.783153648Z"

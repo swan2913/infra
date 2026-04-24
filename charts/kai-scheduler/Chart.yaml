@@ -1,0 +1,9 @@
+apiVersion: v2
+name: kai-scheduler
+description: KAI Scheduler wrapper chart for ArgoCD GitOps
+type: application
+version: 0.5.4
+dependencies:
+  - name: kai-scheduler
+    version: v0.5.4
+    repository: oci://ghcr.io/nvidia/kai-scheduler
