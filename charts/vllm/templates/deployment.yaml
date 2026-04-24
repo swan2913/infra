@@ -69,7 +69,7 @@ spec:
             - "32768"
             - "--parallel"
             - "4"
-            - "--flash-attn"
+            - "--flash-attn=on"
           ports:
             - containerPort: {{ .Values.port }}
           resources:
