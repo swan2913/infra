@@ -15,7 +15,7 @@ spec:
       labels:
         app: vllm
     spec:
-      # k8s 서비스 디스커버리 env var 주입 방지 (VLLM_PORT 충돌 방지)
+      # k8s 서비스 디스커버리 env var 주입 방지
       enableServiceLinks: false
       # GPU 워커 노드에만 스케줄
       nodeSelector:
@@ -24,17 +24,21 @@ spec:
         - key: nvidia.com/gpu
           operator: Exists
           effect: NoSchedule
-      containers:
-        - name: vllm
-          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
-          args:
-            - "--model={{ .Values.model }}"
-            - "--gpu-memory-utilization={{ .Values.gpuMemoryUtilization }}"
-            - "--port={{ .Values.port }}"
-            - "--host=0.0.0.0"
-            {{- range .Values.extraArgs }}
-            - {{ . | quote }}
-            {{- end }}
+      initContainers:
+        - name: download-model
+          image: python:3.11-slim
+          command:
+            - sh
+            - -c
+            - |
+              MODEL_PATH="/models/{{ .Values.model.file }}"
+              if [ -f "$MODEL_PATH" ]; then
+                echo "Model already exists, skipping download."
+                exit 0
+              fi
+              pip install -q huggingface_hub && \
+              huggingface-cli download {{ .Values.model.repo }} {{ .Values.model.file }} \
+                --local-dir /models --local-dir-use-symlinks False
           env:
             - name: HF_TOKEN
               valueFrom:
@@ -42,18 +46,42 @@ spec:
                   name: hf-token
                   key: token
                   optional: true
+          volumeMounts:
+            - name: model-cache
+              mountPath: /models
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "512Mi"
+      containers:
+        - name: vllm
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          args:
+            - "--model"
+            - "/models/{{ .Values.model.file }}"
+            - "--n-gpu-layers"
+            - "999"
+            - "--host"
+            - "0.0.0.0"
+            - "--port"
+            - "{{ .Values.port }}"
+            - "--ctx-size"
+            - "32768"
+            - "--parallel"
+            - "4"
+            - "--flash-attn"
           ports:
             - containerPort: {{ .Values.port }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
             - name: model-cache
-              mountPath: /root/.cache/huggingface
+              mountPath: /models
           readinessProbe:
             httpGet:
               path: /health
               port: {{ .Values.port }}
-            initialDelaySeconds: 120
+            initialDelaySeconds: 30
             periodSeconds: 10
             timeoutSeconds: 5
       volumes:

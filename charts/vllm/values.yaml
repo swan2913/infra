@@ -1,25 +1,19 @@
-model: "kai-os/Carnice-9b-GGUF"
-gpuMemoryUtilization: "0.90"
+image:
+  repository: ghcr.io/ggerganov/llama.cpp
+  tag: server-cuda
+
 port: 8000
 
-image:
-  repository: vllm/vllm-openai
-  tag: latest
+# Q4_K_M: 5.3GB — RTX 3080 10GB에 적합
+model:
+  repo: "kai-os/Carnice-9b-GGUF"
+  file: "Carnice-9b-Q4_K_M.gguf"
 
 resources:
   limits:
     nvidia.com/gpu: "1"
   requests:
     nvidia.com/gpu: "1"
-
-extraArgs:
-  - "--gguf-file=Carnice-9b-Q4_K_M.gguf"
-  - "--tokenizer=kai-os/Carnice-9b"
-  - "--reasoning-parser=qwen3"
-  - "--language-model-only"
-  - "--tensor-parallel-size=1"
-  - "--enable-auto-tool-choice"
-  - "--tool-call-parser=hermes"
 
 persistence:
   enabled: true
