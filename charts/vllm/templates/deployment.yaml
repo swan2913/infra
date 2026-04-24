@@ -26,9 +26,11 @@ spec:
           args:
             - "--model={{ .Values.model }}"
             - "--gpu-memory-utilization={{ .Values.gpuMemoryUtilization }}"
-            - "--max-model-len={{ .Values.maxModelLen }}"
             - "--port={{ .Values.port }}"
             - "--host=0.0.0.0"
+            {{- range .Values.extraArgs }}
+            - {{ . | quote }}
+            {{- end }}
           env:
             - name: HF_TOKEN
               valueFrom:
