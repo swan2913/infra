@@ -1,11 +1,9 @@
-# Ubuntu 24.04 cloud image를 Proxmox에 등록
-resource "proxmox_virtual_environment_download_file" "ubuntu_cloud_image" {
+# 기존 cloud image 참조 (이미 /var/lib/vz/template/iso/ubuntu-24.04-cloud.img 존재)
+data "proxmox_virtual_environment_file" "ubuntu_cloud_image" {
   content_type = "iso"
   datastore_id = "local"
   node_name    = "pve"
-  url          = "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
   file_name    = "ubuntu-24.04-cloud.img"
-  overwrite    = false
 }
 
 # VM 101 — k3s Worker + GPU 추론 노드
@@ -27,17 +25,17 @@ resource "proxmox_virtual_environment_vm" "worker_gpu" {
     dedicated = 16384 # 16GB (vLLM 추론에 여유 필요)
   }
 
-  # GPU PCIe Passthrough (RTX 3080)
+  # GPU PCIe Passthrough — Proxmox resource mapping "rtx3080" 사용
   hostpci {
     device  = "hostpci0"
-    id      = "0000:06:00"
+    mapping = "rtx3080"
     pcie    = true
-    rom_bar = true
+    rombar  = true
   }
 
   disk {
     datastore_id = "local-lvm"
-    file_id      = proxmox_virtual_environment_download_file.ubuntu_cloud_image.id
+    file_id      = data.proxmox_virtual_environment_file.ubuntu_cloud_image.id
     interface    = "scsi0"
     size         = 64
     iothread     = true

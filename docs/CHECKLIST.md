@@ -53,8 +53,11 @@
 - [x] IaC-002 · setup-k3s-agent.yml playbook
 
 ## Phase 7 — GPU 워커 노드 + vLLM (진행 중)
-- [ ] PVE-003 · Terraform으로 VM 101 생성 (`terraform apply`)
-- [ ] PVE-003 · GPU passthrough VM 100 → VM 101 이동
+- [x] PVE-003 · Terraform으로 VM 101 생성 (`terraform apply`) — 192.168.1.24
+- [x] PVE-003 · GPU passthrough VM 100 → VM 101 이동 (RTX 3080 인식 확인)
+- [x] PVE-003 · PCI Resource Mapping `rtx3080` 생성 (iommugroup=16)
+- [x] PVE-003 · TerraformRole에 `Mapping.Use` 권한 추가
+- [x] PVE-003 · root SSH 키 인증 설정 (Terraform SSH 작업용)
 - [ ] GPU-003 · VM 101 NVIDIA 드라이버 설치 (Ansible)
 - [ ] K8S-002 · VM 101 k3s agent 조인 (Ansible)
 - [ ] K8S-002 · 멀티 노드 확인 (`kubectl get nodes`)

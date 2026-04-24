@@ -10,11 +10,8 @@ variable "proxmox_api_token" {
   sensitive   = true
 }
 
-variable "proxmox_ssh_password" {
-  description = "Proxmox root SSH password (for disk operations)"
-  type        = string
-  sensitive   = true
-}
+# SSH는 키 인증으로 변경 (providers.tf 참고)
+# proxmox_ssh_password 변수 제거됨
 
 variable "vm_ssh_public_key" {
   description = "SSH public key injected via cloud-init"

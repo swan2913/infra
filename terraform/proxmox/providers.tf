@@ -13,8 +13,8 @@ provider "proxmox" {
   api_token = var.proxmox_api_token
   insecure  = true # 자체 서명 인증서
   ssh {
-    agent    = false
-    username = "root"
-    password = var.proxmox_ssh_password
+    agent            = false
+    username         = "root"
+    private_key      = file("~/.ssh/vm100_key")
   }
 }
