@@ -1,4 +1,4 @@
-model: "TurbulenceDeterministe/Carnice-9b-W8A16-AWQ"
+model: "kai-os/Carnice-9b-GGUF"
 gpuMemoryUtilization: "0.90"
 port: 8000
 
@@ -13,6 +13,8 @@ resources:
     nvidia.com/gpu: "1"
 
 extraArgs:
+  - "--gguf-file=Carnice-9b-Q4_K_M.gguf"
+  - "--tokenizer=kai-os/Carnice-9b"
   - "--reasoning-parser=qwen3"
   - "--language-model-only"
   - "--tensor-parallel-size=1"
