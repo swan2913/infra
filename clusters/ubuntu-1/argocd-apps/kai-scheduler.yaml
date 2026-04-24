@@ -8,7 +8,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://run-ai.github.io/helm-charts
+    repoURL: ghcr.io/nvidia/kai-scheduler
     chart: kai-scheduler
     targetRevision: "*"
   destination:
