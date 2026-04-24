@@ -1,0 +1,34 @@
+---
+- name: k3s Worker Agent 설치 및 클러스터 조인
+  hosts: workers
+  become: true
+  vars:
+    k3s_server_url: "https://192.168.1.234:6443"
+
+  tasks:
+    - name: k3s server token 가져오기
+      delegate_to: "{{ groups['control_plane'][0] }}"
+      command: cat /var/lib/rancher/k3s/server/node-token
+      register: k3s_token
+      changed_when: false
+
+    - name: NVIDIA 드라이버 + Container Toolkit 설치
+      include_tasks: ../tasks/nvidia.yml
+
+    - name: k3s agent 설치
+      shell: |
+        curl -sfL https://get.k3s.io | \
+          K3S_URL="{{ k3s_server_url }}" \
+          K3S_TOKEN="{{ k3s_token.stdout }}" \
+          sh -
+      args:
+        creates: /usr/local/bin/k3s
+
+    - name: 노드 조인 확인 (컨트롤 플레인에서)
+      delegate_to: "{{ groups['control_plane'][0] }}"
+      command: kubectl get nodes
+      register: nodes
+      changed_when: false
+
+    - debug:
+        var: nodes.stdout_lines

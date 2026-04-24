@@ -1,0 +1,5 @@
+apiVersion: v2
+name: vllm
+description: vLLM inference server on GPU worker node
+type: application
+version: 0.1.0

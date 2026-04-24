@@ -1,0 +1,21 @@
+model: "google/gemma-3-4b-it"   # 10GB VRAM에 BF16으로 여유 있게 올라감 (약 8GB)
+# 12B를 올리려면: google/gemma-3-12b-it-qat (INT4 양자화, ~7GB)
+gpuMemoryUtilization: "0.90"
+maxModelLen: "8192"
+port: 8000
+
+image:
+  repository: vllm/vllm-openai
+  tag: latest
+
+resources:
+  limits:
+    nvidia.com/gpu: "1"
+  requests:
+    nvidia.com/gpu: "1"
+
+# 모델 캐시용 PVC
+persistence:
+  enabled: true
+  size: 50Gi
+  storageClass: local-path

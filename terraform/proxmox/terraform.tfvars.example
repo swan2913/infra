@@ -1,0 +1,5 @@
+# 이 파일을 terraform.tfvars로 복사 후 값 채울 것 (.gitignore로 제외됨)
+proxmox_endpoint     = "https://192.168.1.94:8006"
+proxmox_api_token    = "terraform@pve!terraform=<YOUR-TOKEN-UUID>"
+proxmox_ssh_password = "your-root-password"
+vm_ssh_public_key    = "ssh-ed25519 AAAA... ubuntu@worker"
