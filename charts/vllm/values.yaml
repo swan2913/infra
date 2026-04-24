@@ -13,7 +13,6 @@ resources:
     nvidia.com/gpu: "1"
 
 extraArgs:
-  - "--max-model-len=1000000"
   - "--reasoning-parser=qwen3"
   - "--language-model-only"
   - "--tensor-parallel-size=1"
