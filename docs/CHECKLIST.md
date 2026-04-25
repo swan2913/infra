@@ -74,22 +74,17 @@
 
 ## Phase 8 — Hermes Agent (자율 인프라 에이전트)
 - [x] ML-003 · Hermes Agent k8s Deployment 작성 (namespace: hermes)
-- [x] ML-003 · PVC 10Gi 영속 볼륨 (sessions, memory, skills)
-- [x] ML-003 · config.yaml: model=Carnice-9b-Q4_K_M.gguf, context_length=131072
-- [x] ML-003 · initContainer로 ConfigMap → PVC 복사 (UID 10000 chown)
-- [x] ML-003 · Discord 봇 연결 (hermes-discord Secret: bot-token, allowed-users)
-- [x] ML-003 · GitHub 연결 (hermes-github Secret: GITHUB_TOKEN)
-- [x] ML-003 · enableServiceLinks: false (VLLM_PORT k8s env 충돌 방지)
-- [x] ML-003 · Discord Privileged Gateway Intents 활성화
-- [x] ML-003 · ArgoCD App 등록 (clusters/ubuntu-1/argocd-apps/hermes.yaml)
+- [x] ML-003 · Discord 봇 연결, GitHub 연결, Discord Privileged Gateway Intents 활성화
 - [x] ML-003 · Hermes Agent 1/1 Running — Discord 연결 정상 ✓
+- [x] ML-005 · Hermes k8s → PVE 호스트 systemd 마이그레이션 (인프라 전자동화 목적)
+- [x] ML-005 · docker --network=host + host 바이너리 마운트 (pveum, qm, kubectl, terraform 접근)
+- [x] ML-005 · /etc/systemd/system/hermes.service 등록, 부팅 자동 시작 ✓
+- [x] IaC-003 · Proxmox API 토큰 노출 → filter-branch 히스토리 정리 + 토큰 재발급 (IaC-003)
+- [x] K8S-001 · Control plane 분리 원칙 확정 (ADR: VM 100 전용 유지)
 
 ## Backlog
-- [ ] PVE-004 · Terraform으로 VM 100도 코드화 (현재는 수동 생성)
-- [ ] K8S-003 · 워커 노드 추가 확장 (물리 머신)
-- [ ] ML-006 · Discord 멀티유저 서버 초대: parallel 4 + DISCORD_ALLOWED_USERS 확장
-- [ ] ML-007 · Hermes 스킬 확장 (kubectl 실행, ArgoCD 트리거 등)
-- [ ] ML-007 · HuggingFace 토큰 k8s Secret으로 관리
-- [ ] ML-008 · 더 큰 모델 검토 (Carnice 27B 또는 MoE 35B-A3B, VRAM 증설 시)
+- [ ] PVE-004 · Terraform으로 VM 100 코드화 (현재 수동 생성 — IaC 원칙 미준수)
+- [ ] ML-006 · Hermes 스킬 확장 (kubectl, ArgoCD 트리거, terraform apply 등)
 - [ ] GITOPS-003 · KAI Scheduler 필요성 재검토 (추론 전용이라 불필요 가능)
-- [ ] IaC-003 · Ansible Galaxy role 분리
+- [ ] K8S-003 · 워커 노드 추가 확장 (물리 머신)
+- [ ] ML-007 · 더 큰 모델 검토 (Carnice 27B 또는 MoE 35B-A3B, VRAM 증설 시)
