@@ -5,6 +5,11 @@ Proxmox VE 위에 k3s + GPU 패스스루 + GitOps로 llama.cpp 추론 서버와 
 
 ## 핵심 원칙
 
+### 아키텍처 원칙
+- **책임 경계**: 각 노드는 단일 역할. 편의를 위한 통합은 하지 않는다.
+- **장애 내성**: control plane과 워크로드는 반드시 분리. GPU 장애가 클러스터 전체 장애가 되어선 안 된다.
+- **IaC 우선**: 노드 추가/제거는 Terraform으로. 수동 변경 후 코드 역반영은 금지.
+
 ### GitOps 단일 원천
 - **모든 변경은 git push → ArgoCD 자동 반영** 이 원칙.
 - `kubectl apply` 직접 실행은 테스트/긴급 목적에만 허용. 반드시 이후 git에 반영.
@@ -29,9 +34,9 @@ Proxmox VE 위에 k3s + GPU 패스스루 + GitOps로 llama.cpp 추론 서버와 
 
 | 항목 | 값 |
 |------|-----|
-| PVE 호스트 | 192.168.1.94 (ksh@pve) |
-| VM 100 (CP) | 192.168.1.234 (ubuntu@ubuntu-1) |
-| VM 101 (Worker) | 192.168.1.24 (ubuntu@worker-gpu) |
+| PVE 호스트 | 192.168.1.94 (ksh@pve) — 하이퍼바이저, Hermes Agent, Terraform/Ansible |
+| VM 100 (CP) | 192.168.1.234 (ubuntu@ubuntu-1) — k3s control plane, ArgoCD |
+| VM 101 (Worker) | 192.168.1.24 (ubuntu@worker-gpu) — k3s worker, GPU 워크로드, llama.cpp |
 | SSH VM 접속 | `ssh vm100` 또는 `ssh vm101` (PVE 호스트에서) |
 | kubectl | `ssh vm100 kubectl ...` 또는 VM 직접 접속 |
 | ArgoCD UI | https://192.168.1.234:30443 |
@@ -39,7 +44,7 @@ Proxmox VE 위에 k3s + GPU 패스스루 + GitOps로 llama.cpp 추론 서버와 
 | LLM 엔드포인트 (외부) | http://192.168.1.24:30800 |
 | LLM 엔드포인트 (클러스터 내) | http://vllm.vllm.svc.cluster.local:8000/v1 |
 | LLM 모델 | Carnice-9b-Q6_K.gguf (llama.cpp, 128K ctx) |
-| Hermes Agent | namespace: hermes, Discord 봇 인터페이스 |
+| Hermes Agent | PVE 호스트 systemd 서비스, Discord 봇 인터페이스 |
 
 ## 도메인 코드 체계
 
@@ -59,9 +64,12 @@ Proxmox VE 위에 k3s + GPU 패스스루 + GitOps로 llama.cpp 추론 서버와 
 ssh vm100 kubectl get nodes
 ssh vm100 kubectl get app -n argocd -o wide
 
-# llama.cpp / Hermes 상태
+# llama.cpp 상태
 ssh vm100 kubectl get pods -n vllm
-ssh vm100 kubectl get pods -n hermes
+
+# Hermes Agent 상태 (PVE 호스트 systemd)
+sudo systemctl status hermes
+sudo journalctl -u hermes -n 20
 
 # 변경 전 git 상태
 cd ~/infra && git status && git log --oneline -5
