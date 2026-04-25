@@ -33,7 +33,7 @@ Proxmox VE 위에 k3s + GPU 패스스루 + GitOps로 llama.cpp 추론 서버와 
 | infra 리포 | ~/infra (git@github.com:swan2913/infra.git) |
 | LLM 엔드포인트 (외부) | http://192.168.1.24:30800 |
 | LLM 엔드포인트 (클러스터 내) | http://vllm.vllm.svc.cluster.local:8000/v1 |
-| LLM 모델 | Carnice-9b-Q4_K_M.gguf (llama.cpp, 128K ctx) |
+| LLM 모델 | Carnice-9b-Q6_K.gguf (llama.cpp, 128K ctx) |
 | Hermes Agent | namespace: hermes, Discord 봇 인터페이스 |
 
 ## 도메인 코드 체계

@@ -69,6 +69,7 @@
 - [x] ML-001 · `/health` endpoint 확인 ✓
 - [x] ML-001 · OpenAI API 호환 (`/v1/chat/completions`) 테스트 ✓
 - [x] ML-002 · vLLM → llama.cpp 전환 기록 문서화 (ML-002)
+- [x] ML-004 · Carnice-9b Q4_K_M → Q6_K 업그레이드 (VRAM 분석 기반, perplexity -34%)
 
 ## Phase 8 — Hermes Agent (자율 인프라 에이전트)
 - [x] ML-003 · Hermes Agent k8s Deployment 작성 (namespace: hermes)
@@ -85,8 +86,8 @@
 ## Backlog
 - [ ] PVE-004 · Terraform으로 VM 100도 코드화 (현재는 수동 생성)
 - [ ] K8S-003 · 워커 노드 추가 확장 (물리 머신)
-- [ ] ML-004 · Hermes 스킬 확장 (kubectl 실행, ArgoCD 트리거 등)
-- [ ] ML-004 · HuggingFace 토큰 k8s Secret으로 관리
-- [ ] ML-005 · 더 큰 모델 검토 (Carnice 9B → 더 고성능 모델, VRAM 여유 시)
+- [ ] ML-005 · Hermes 스킬 확장 (kubectl 실행, ArgoCD 트리거 등)
+- [ ] ML-005 · HuggingFace 토큰 k8s Secret으로 관리
+- [ ] ML-006 · 더 큰 모델 검토 (Carnice 27B 또는 MoE 35B-A3B, VRAM 증설 시)
 - [ ] GITOPS-003 · KAI Scheduler 필요성 재검토 (추론 전용이라 불필요 가능)
 - [ ] IaC-003 · Ansible Galaxy role 분리
