@@ -6,7 +6,7 @@ image:
 # vLLM 인클러스터 엔드포인트
 vllm:
   baseUrl: "http://vllm.vllm.svc.cluster.local:8000/v1"
-  model: "TurbulenceDeterministe/Carnice-9b-W8A16-AWQ"
+  model: "Carnice-9b-Q4_K_M.gguf"
 
 # Discord 봇 설정 (토큰은 k8s Secret 'hermes-discord'에서 주입)
 discord:

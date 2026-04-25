@@ -9,6 +9,7 @@ data:
       default: {{ .Values.vllm.model | quote }}
       provider: "custom"
       base_url: {{ .Values.vllm.baseUrl | quote }}
+      context_length: 131072
     custom_providers:
       - name: "vllm"
         base_url: {{ .Values.vllm.baseUrl | quote }}
