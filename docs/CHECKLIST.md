@@ -84,7 +84,7 @@
 
 ## Backlog
 - [x] PVE-004 · Terraform으로 VM 100 코드화 (import → apply, lifecycle ignore_changes 적용)
-- [ ] ML-006 · Hermes 스킬 확장 (kubectl, ArgoCD 트리거, terraform apply 등)
+- [x] ML-006 · Hermes 스킬 확장 — terminal 툴 확인, AGENTS.md 인프라 컨텍스트 주입
 - [x] GITOPS-003 · KAI Scheduler 제거 — 단일 GPU 추론 클러스터에 불필요, 미사용 확인 후 삭제
 - [ ] K8S-003 · 워커 노드 추가 확장 (물리 머신)
 - [ ] ML-007 · 더 큰 모델 검토 (Carnice 27B 또는 MoE 35B-A3B, VRAM 증설 시)
