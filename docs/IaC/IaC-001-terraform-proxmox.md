@@ -52,7 +52,7 @@ cd ~/infra/terraform/proxmox
 # 1) tfvars 파일 생성 (git에 올리지 않음)
 cp terraform.tfvars.example terraform.tfvars
 vim terraform.tfvars
-# proxmox_api_token    = "terraform@pve!terraform=<YOUR-TOKEN-UUID>..."
+# proxmox_api_token    = "terraform@pve!terraform=<YOUR-TOKEN-UUID>"
 # proxmox_ssh_password = "root 비밀번호"
 # vm_ssh_public_key    = "ssh-ed25519 AAAA..."
 
