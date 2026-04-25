@@ -1,0 +1,57 @@
+---
+- name: NVIDIA GPU Power Limit 설정
+  hosts: workers
+  become: true
+  vars:
+    # RTX 3080 Gigabyte (max 370W) → 250W
+    # 근거: 실측 벤치마크 결과 250W가 W/tok 효율 최적점
+    #   370W: 78.8 tok/s, 307W, 3.90 W/tok
+    #   250W: 73.4 tok/s, 240W, 3.26 W/tok (성능 93%, 전력 78%) ← 최적
+    #   220W: 61.3 tok/s, 203W, 3.31 W/tok
+    #   200W: 50.4 tok/s, 196W, 3.88 W/tok
+    nvidia_power_limit: 250
+
+  tasks:
+    - name: nvidia-smi 사용 가능 여부 확인
+      command: which nvidia-smi
+      register: nvidia_smi_check
+      changed_when: false
+      failed_when: nvidia_smi_check.rc != 0
+
+    - name: Persistence Mode 활성화 (드라이버 상시 로드)
+      command: nvidia-smi -pm 1
+      changed_when: false
+
+    - name: nvidia-powerlimit systemd 유닛 배포
+      copy:
+        dest: /etc/systemd/system/nvidia-powerlimit.service
+        mode: '0644'
+        content: |
+          [Unit]
+          Description=NVIDIA GPU Power Limit
+          After=multi-user.target
+
+          [Service]
+          Type=oneshot
+          ExecStart=/usr/bin/nvidia-smi -pm 1
+          ExecStart=/usr/bin/nvidia-smi -pl {{ nvidia_power_limit }}
+          RemainAfterExit=yes
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: nvidia-powerlimit 서비스 활성화 및 즉시 적용
+      systemd:
+        name: nvidia-powerlimit
+        enabled: true
+        state: started
+        daemon_reload: true
+
+    - name: 적용된 Power Limit 확인
+      command: nvidia-smi --query-gpu=name,power.limit,power.draw,temperature.gpu --format=csv,noheader
+      register: gpu_status
+      changed_when: false
+
+    - name: GPU 상태 출력
+      debug:
+        msg: "{{ gpu_status.stdout }}"
