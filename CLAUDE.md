@@ -19,6 +19,10 @@ Proxmox VE 위에 k3s + GPU 패스스루 + GitOps로 llama.cpp 추론 서버와 
 - 비밀번호, API 토큰, SSH 키는 절대 git commit 하지 않음.
 - 민감 정보는 `*.tfvars`, k8s Secret, `.env` 로 관리 (모두 .gitignore).
 - HuggingFace 토큰 등은 k8s Secret으로 주입.
+- `.example` 파일에도 실제 값 사용 금지 — 반드시 `<YOUR-TOKEN-UUID>` 형식 플레이스홀더 사용.
+- 문서/주석의 명령어 예시에도 실제 토큰/패스워드 기재 금지.
+- 토큰이 노출된 경우: 히스토리 정리보다 **즉시 폐기·재발급이 먼저** (참고: IaC-003).
+- commit 전 확인: `git diff --cached | grep -E "(password|token|secret)\s*=\s*\"[^<]"`
 
 ## 환경 정보
 
