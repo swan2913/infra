@@ -65,8 +65,17 @@ def metric(example, prediction, trace=None):
     return True
 
 
+def safe_call(agent, question):
+    try:
+        return agent(question=question)
+    except Exception:
+        class _Empty:
+            command = ""
+        return _Empty()
+
+
 def score_dataset(agent, examples):
-    correct = sum(1 for ex in examples if metric(ex, agent(question=ex["question"])))
+    correct = sum(1 for ex in examples if metric(ex, safe_call(agent, ex["question"])))
     return correct / len(examples) if examples else 0
 
 
@@ -81,7 +90,7 @@ def main():
         f"openai/{MODEL_NAME}",
         api_base=API_BASE,
         api_key="none",
-        max_tokens=300,
+        max_tokens=6000,
         temperature=0.0,
     )
     dspy.configure(lm=lm)
@@ -112,7 +121,7 @@ def main():
 
     # 최적화 전 베이스라인
     print("=== 베이스라인 평가 ===")
-    baseline = score_dataset(agent, [e.__dict__ for e in eval_examples])
+    baseline = score_dataset(agent, eval_examples)
     print(f"Baseline 정확도: {baseline:.1%} ({int(baseline*len(eval_examples))}/{len(eval_examples)})")
 
     # BootstrapFewShot 최적화
@@ -126,17 +135,18 @@ def main():
 
     # 최적화 후 평가
     print("\n=== 최적화 후 평가 ===")
-    optimized_score = score_dataset(optimized, [e.__dict__ for e in eval_examples])
+    optimized_score = score_dataset(optimized, eval_examples)
     print(f"Optimized 정확도: {optimized_score:.1%} ({int(optimized_score*len(eval_examples))}/{len(eval_examples)})")
     print(f"개선: {(optimized_score - baseline):+.1%}")
 
-    # few-shot 예시 추출
+    # few-shot 예시 추출 (ChainOfThought → predict.predict.demos)
     demos = []
     try:
-        for demo in optimized.predict.demos:
+        raw_demos = optimized.predict.predict.demos
+        for demo in raw_demos:
             demos.append({
-                "question": demo.get("question", ""),
-                "command":  demo.get("command", ""),
+                "question": demo["question"],
+                "command":  demo["command"],
             })
     except Exception:
         pass
