@@ -11,7 +11,7 @@
 ubuntu-1 ansible_host=192.168.1.234 ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/vm100_key
 
 [workers]
-# worker-gpu ansible_host=192.168.1.xxx ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/vm100_key
+worker-gpu ansible_host=192.168.1.24 ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/vm100_key
 
 [k8s_cluster:children]
 control_plane
@@ -26,6 +26,7 @@ pve ansible_host=192.168.1.94 ansible_user=ksh ansible_connection=local
 | 파일 | 대상 | 내용 |
 |------|------|------|
 | `setup-nvidia.yml` | workers | NVIDIA 드라이버 + Container Toolkit |
+| `setup-nvidia-powerlimit.yml` | workers | GPU Power Limit 설정 (기본 250W, 재부팅 유지) |
 | `setup-k3s.yml` | control_plane | k3s Control Plane 설치 |
 | `setup-k3s-agent.yml` | workers | k3s Worker Agent 조인 |
 
@@ -67,9 +68,12 @@ vim ansible/inventory/hosts.ini
 # 3. NVIDIA 드라이버 설치 (VM 재부팅 포함)
 ansible-playbook -i ansible/inventory/hosts.ini ansible/playbooks/setup-nvidia.yml
 
-# 4. k3s agent 조인
+# 4. GPU Power Limit 설정 (재부팅 후 driver 로드된 상태에서 실행)
+ansible-playbook -i ansible/inventory/hosts.ini ansible/playbooks/setup-nvidia-powerlimit.yml
+
+# 5. k3s agent 조인
 ansible-playbook -i ansible/inventory/hosts.ini ansible/playbooks/setup-k3s-agent.yml
 
-# 5. 노드 확인
+# 6. 노드 확인
 ssh vm100 kubectl get nodes
 ```

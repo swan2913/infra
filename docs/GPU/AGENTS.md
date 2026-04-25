@@ -23,6 +23,20 @@ kubectl describe node | grep nvidia  # GPU 리소스 노출 확인
 kubectl get pods -n gpu-operator     # GPU Operator 상태
 ```
 
+## Power Limit 원칙
+
+- RTX 3080 Gigabyte (max 370W) 기준 **250W가 효율 최적점** (실측 기반)
+- Linux에서 전압 커브 조정 불가 — power limit이 유일한 실용적 방법
+- `nvidia-smi -pm 1` (Persistence Mode) 필수 — 드라이버 상시 로드
+- 설정은 반드시 Ansible playbook으로 (수동 `nvidia-smi` 적용은 재부팅 시 초기화됨)
+
+```bash
+# power limit 확인
+ssh worker-gpu nvidia-smi --query-gpu=power.limit,power.draw,temperature.gpu --format=csv,noheader
+```
+
 ## 파일 위치
 - 드라이버 설치 문서: `docs/GPU/GPU-001-nvidia-driver-passthrough.md`
+- Power Limit 최적화: `docs/GPU/GPU-002-power-limit-optimization.md`
+- Power Limit Ansible: `ansible/playbooks/setup-nvidia-powerlimit.yml`
 - GPU Operator 설정: `clusters/ubuntu-1/argocd-apps/gpu-operator.yaml`

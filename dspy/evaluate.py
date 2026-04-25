@@ -36,7 +36,7 @@ def main():
         f"openai/{MODEL_NAME}",
         api_base=API_BASE,
         api_key="none",
-        max_tokens=200,
+        max_tokens=1500,
         temperature=0.0,
     )
     dspy.configure(lm=lm)

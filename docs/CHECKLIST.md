@@ -49,6 +49,7 @@
 - [x] IaC-001 · VM 101 (worker-gpu) Terraform 코드 작성
 - [x] IaC-002 · Ansible inventory (hosts.ini) 작성
 - [x] IaC-002 · setup-nvidia.yml playbook
+- [x] IaC-002 · setup-nvidia-powerlimit.yml playbook (250W, systemd 영구 적용)
 - [x] IaC-002 · setup-k3s.yml playbook
 - [x] IaC-002 · setup-k3s-agent.yml playbook
 
@@ -62,6 +63,7 @@
 - [x] GPU-003 · GPU Operator가 worker-gpu 자동 감지 → nvidia.com/gpu:1 노출
 - [x] K8S-002 · VM 101 k3s agent 조인 (Ansible)
 - [x] K8S-002 · 멀티 노드 확인 (ubuntu-1: control-plane / worker-gpu: Ready)
+- [x] GPU-002 · RTX 3080 Power Limit 최적화 — 250W (실측: 성능 93%, 전력 78%, W/tok 최저)
 - [x] ML-001 · vLLM → llama.cpp 전환 (CUDA OOM으로 Gemma AWQ 포기)
 - [x] ML-001 · Carnice-9b-Q4_K_M.gguf 모델 (5.3GB) 선택
 - [x] ML-001 · llama.cpp ArgoCD App Sync — Running (worker-gpu)
