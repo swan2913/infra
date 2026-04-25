@@ -14,6 +14,7 @@ Proxmox VE 위에 k3s + GPU 패스스루 + GitOps로 llama.cpp 추론 서버와 
 - 새 작업 완료 시 해당 도메인 폴더에 `도메인코드-번호-제목.md` 추가.
 - `docs/CHECKLIST.md` 를 항상 최신 상태로 갱신.
 - 명령어는 도메인별 문서에, README는 개요/구조/접속정보만.
+- **아키텍처 의사결정은 반드시 문서화**: 선택지(A/B/C), 선택 이유, 포기한 대안과 그 이유를 `docs/<DOMAIN>/<DOMAIN>-NNN-adr-제목.md`에 기록. 나중에 "왜 이렇게 했지?"라는 질문에 git log만으로 답할 수 없을 때를 위해.
 
 ### 보안
 - 비밀번호, API 토큰, SSH 키는 절대 git commit 하지 않음.
