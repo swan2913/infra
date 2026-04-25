@@ -83,7 +83,7 @@
 - [x] K8S-001 · Control plane 분리 원칙 확정 (ADR: VM 100 전용 유지)
 
 ## Backlog
-- [ ] PVE-004 · Terraform으로 VM 100 코드화 (현재 수동 생성 — IaC 원칙 미준수)
+- [x] PVE-004 · Terraform으로 VM 100 코드화 (import → apply, lifecycle ignore_changes 적용)
 - [ ] ML-006 · Hermes 스킬 확장 (kubectl, ArgoCD 트리거, terraform apply 등)
 - [ ] GITOPS-003 · KAI Scheduler 필요성 재검토 (추론 전용이라 불필요 가능)
 - [ ] K8S-003 · 워커 노드 추가 확장 (물리 머신)
