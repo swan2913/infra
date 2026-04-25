@@ -43,6 +43,11 @@ spec:
                   optional: true
             - name: DISCORD_IGNORE_NO_MENTION
               value: {{ .Values.discord.ignoreMention | quote }}
+            - name: GITHUB_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: hermes-github
+                  key: token
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
