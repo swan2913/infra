@@ -76,6 +76,7 @@
 - [x] ML-003 · Hermes Agent k8s Deployment 작성 (namespace: hermes)
 - [x] ML-003 · Discord 봇 연결, GitHub 연결, Discord Privileged Gateway Intents 활성화
 - [x] ML-003 · Hermes Agent 1/1 Running — Discord 연결 정상 ✓
+- [x] ML-003 · Hermes config system_prompt에 에이전트 identity 주입 (모델 자기인식 hallucination 방지)
 - [x] ML-005 · Hermes k8s → PVE 호스트 systemd 마이그레이션 (인프라 전자동화 목적)
 - [x] ML-005 · docker --network=host + host 바이너리 마운트 (pveum, qm, kubectl, terraform 접근)
 - [x] ML-005 · /etc/systemd/system/hermes.service 등록, 부팅 자동 시작 ✓
@@ -86,5 +87,5 @@
 - [x] PVE-004 · Terraform으로 VM 100 코드화 (import → apply, lifecycle ignore_changes 적용)
 - [x] ML-006 · Hermes 스킬 확장 — terminal 툴 확인, AGENTS.md 인프라 컨텍스트 주입
 - [x] GITOPS-003 · KAI Scheduler 제거 — 단일 GPU 추론 클러스터에 불필요, 미사용 확인 후 삭제
-- [ ] K8S-003 · 워커 노드 추가 확장 (물리 머신)
-- [ ] ML-007 · 더 큰 모델 검토 (Carnice 27B 또는 MoE 35B-A3B, VRAM 증설 시)
+- [ ] K8S-003 · 워커 노드 추가 확장 (물리 머신 확보 시)
+- [ ] ML-007 · 더 큰 모델 검토 (GPU 증설 시 — 현재 계획 없음)
