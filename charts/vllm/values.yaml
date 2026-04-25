@@ -4,10 +4,11 @@ image:
 
 port: 8000
 
-# Q4_K_M: 5.3GB — RTX 3080 10GB에 적합
+# Q6_K: 7.4GB — RTX 3080 10GB, Q4_K_M 대비 품질 향상 (perplexity -34%)
+# Q8_0(9.5GB)은 KV 캐시 포함 시 VRAM 초과로 불가
 model:
   repo: "kai-os/Carnice-9b-GGUF"
-  file: "Carnice-9b-Q4_K_M.gguf"
+  file: "Carnice-9b-Q6_K.gguf"
 
 resources:
   limits:
