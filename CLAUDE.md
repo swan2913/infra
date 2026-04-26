@@ -84,13 +84,21 @@ cd ~/infra && git status && git log --oneline -5
 
 ## Hermes Agent 관리 규칙
 
+### 실행 환경
+- **네이티브 설치** — Docker 없이 PVE 호스트에 직접 설치
+- 소스: `/opt/hermes-agent/` (hermes-agent v0.11.0 editable install)
+- venv: `/opt/hermes-agent/.venv/bin/hermes`
+- 실행 계정: `ksh` (sudo NOPASSWD:ALL → qm/systemctl/docker 등 전체 접근 가능)
+- 데이터: `/opt/hermes/data/`
+- 환경변수: `/opt/hermes/.env`
+
 ### 설정 파일 위치 (git 정본)
 | 파일 | 경로 | 역할 |
 |------|------|------|
 | `config.yaml` | `hermes/config.yaml` | 모델 설정, system prompt, Verified Examples |
 | `AGENTS.md` | `hermes/AGENTS.md` | 에이전트 행동 규칙, 서비스 위치 참조 |
 | `SOUL.md` | `hermes/SOUL.md` | 에이전트 정체성, 소통 방식 |
-| `hermes.service` | `/opt/hermes/hermes.service` | systemd 서비스 정의 (변경 시 `/etc/systemd/system/`에도 복사) |
+| `hermes.service` | `hermes/hermes.service` | systemd 서비스 정의 |
 
 ### 수정 → 반영 절차
 ```bash
@@ -104,6 +112,12 @@ cd ~/infra && git add hermes/ && git commit -m "hermes: ..." && git push origin 
 sudo systemctl restart hermes
 ```
 
+### hermes.service 변경 시
+```bash
+sudo cp ~/infra/hermes/hermes.service /etc/systemd/system/hermes.service
+sudo systemctl daemon-reload && sudo systemctl restart hermes
+```
+
 ### git 관리 제외 항목 (`/opt/hermes/data/` 전용)
 - `.env` — Discord 토큰, API 키
 - `vm_key` — SSH 개인키
@@ -112,4 +126,19 @@ sudo systemctl restart hermes
 
 ### 주의
 - `/opt/hermes/data/config.yaml`을 직접 수정하지 않는다 — 재시작 시 덮어씌워진다.
-- `hermes.service` 변경 시 `sudo cp /opt/hermes/hermes.service /etc/systemd/system/hermes.service && sudo systemctl daemon-reload` 필요.
+- hermes-agent 업데이트: `sudo /opt/hermes-agent/.venv/bin/pip install -e /opt/hermes-agent`
+
+### Discord 알림 (Claude Code → 사용자)
+```bash
+~/infra/scripts/hermes-notify "메시지"
+```
+내부적으로 `scripts/discord-dm.py` → Discord Bot API 직접 호출 (LLM 우회).
+
+### 자동화 스케줄 (systemd 타이머)
+| 타이머 | 시간 (KST) | 역할 |
+|--------|-----------|------|
+| `hermes-canary.timer` | 09:00 | Hermes 응답 품질 캐너리 검사 |
+| `hermes-dspy-optimize.timer` | 12:00 | DSPy BootstrapFewShot 자동 최적화 |
+| `hermes-dspy-remind.timer` | 18:00 | 최적화 후 재시작 리마인더 |
+
+모두 host systemd 타이머로 실행 — Hermes LLM 경유 없음 (LLM-in-LLM 루프 방지).
