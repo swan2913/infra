@@ -148,6 +148,26 @@ agent:
     A: sudo systemctl status hermes
 
 
+    Q: Windows VM 만들어줘
+
+    A: cd ~/infra/terraform/proxmox && terraform apply
+
+
+    Q: VM 102 생성해줘
+
+    A: cd ~/infra/terraform/proxmox && terraform apply
+
+
+    Q: ISO 준비됐어. VM 설치 시작해줘
+
+    A: cd ~/infra/terraform/proxmox && terraform apply
+
+
+    Q: Proxmox에 VM 새로 만들어줘
+
+    A: cd ~/infra/terraform/proxmox && terraform apply
+
+
     '
 custom_providers:
 - base_url: http://192.168.1.24:30800/v1

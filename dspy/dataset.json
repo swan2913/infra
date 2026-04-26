@@ -220,5 +220,35 @@
     "expected_command": "cat ~/infra/hermes/config.yaml",
     "must_contain": ["cat", "infra"],
     "must_not_contain": ["write_file", "echo >"]
+  },
+  {
+    "question": "Windows VM 만들어줘",
+    "expected_command": "cd ~/infra/terraform/proxmox && terraform apply",
+    "must_contain": ["terraform", "apply", "infra/terraform"],
+    "must_not_contain": ["qm create", "qm set"]
+  },
+  {
+    "question": "VM 102 생성해줘",
+    "expected_command": "cd ~/infra/terraform/proxmox && terraform apply",
+    "must_contain": ["terraform", "apply"],
+    "must_not_contain": ["qm create"]
+  },
+  {
+    "question": "ISO 준비됐어. VM 설치 시작해줘",
+    "expected_command": "cd ~/infra/terraform/proxmox && terraform apply",
+    "must_contain": ["terraform", "apply"],
+    "must_not_contain": ["qm create", "qm start"]
+  },
+  {
+    "question": "새 VM 추가하려고 해. 현재 terraform 코드 확인해줘",
+    "expected_command": "cat ~/infra/terraform/proxmox/main.tf",
+    "must_contain": ["infra/terraform/proxmox/main.tf"],
+    "must_not_contain": ["qm create"]
+  },
+  {
+    "question": "Proxmox에 VM 새로 만들어줘",
+    "expected_command": "cd ~/infra/terraform/proxmox && terraform apply",
+    "must_contain": ["terraform", "apply"],
+    "must_not_contain": ["qm create"]
   }
 ]

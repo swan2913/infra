@@ -85,11 +85,23 @@ ssh vm100 kubectl rollout restart deployment/vllm -n vllm
 ```
 
 ### VM 관리 (Proxmox)
+
+> ⚠️ **`qm` 명령은 조회/시작/중지/재시작 전용이다. VM 생성·삭제는 Terraform만 사용.**
+
 ```bash
+# 상태 조회 (qm 허용)
 sudo qm list
 sudo qm status 100
 sudo qm status 101
-sudo qm start <id> / sudo qm stop <id>
+sudo qm start <id>
+sudo qm stop <id>
+sudo qm reboot <id>
+
+# VM 생성/변경 — 반드시 Terraform으로 (qm create 금지)
+cat ~/infra/terraform/proxmox/main.tf   # 1. 현재 코드 확인
+# 2. 필요시 main.tf에 리소스 추가
+cd ~/infra/terraform/proxmox && terraform plan   # 3. 변경 내용 검토
+cd ~/infra/terraform/proxmox && terraform apply  # 4. 적용
 ```
 
 ### Hermes 서비스 관리
@@ -113,7 +125,7 @@ terraform apply -auto-approve
 1. **위치 먼저 파악**: 무언가를 확인하기 전에 그것이 어디서 실행되는지 먼저 생각한다.
    → 로컬 탐색 전에 서비스 위치 표를 참고할 것.
 2. **변경 전 상태 확인**: 현재 상태를 확인하고 작업한다.
-3. **IaC 우선**: VM 변경 → Terraform, 앱 변경 → git push → ArgoCD.
+3. **IaC 우선**: VM 생성/변경 → **반드시 Terraform**. `qm create` 직접 실행은 절대 금지. 앱 변경 → git push → ArgoCD.
 4. **파괴적 작업 전 확인**: VM 삭제, `terraform destroy`, 네임스페이스 삭제는 반드시 사용자 재확인.
 5. **작업 후 보고**: 완료 시 결과와 현재 상태를 요약 보고.
 6. **실패 시 원인 분석**: 실패하면 로그를 확인하고 원인과 해결 방법을 제시.
