@@ -1,0 +1,8 @@
+[Unit]
+Description=Hermes Curiosity — hourly question (KST 08-23)
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=ksh
+ExecStart=/usr/bin/python3 /home/ksh/infra/scripts/hermes-curiosity.py

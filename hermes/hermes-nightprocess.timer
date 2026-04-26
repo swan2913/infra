@@ -1,0 +1,9 @@
+[Unit]
+Description=Hermes Night Process — every 2h during KST 00-07 (UTC 15,17,19,21,23)
+
+[Timer]
+OnCalendar=*-*-* 15,17,19,21,23:00:00 UTC
+Persistent=false
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,8 @@
+[Unit]
+Description=Hermes Night Process — daily session summary (KST 00-07)
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=ksh
+ExecStart=/usr/bin/python3 /home/ksh/infra/scripts/hermes-nightprocess.py
