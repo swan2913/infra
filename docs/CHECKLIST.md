@@ -1,6 +1,6 @@
 # 인프라 구축 체크리스트
 
-> 갱신일: 2026-04-25  
+> 갱신일: 2026-04-26  
 > 목표: Proxmox + k3s + GPU + GitOps + llama.cpp 추론 서버 + Hermes 자율 에이전트
 
 ---
@@ -84,6 +84,17 @@
 - [x] ML-005 · /etc/systemd/system/hermes.service 등록, 부팅 자동 시작 ✓
 - [x] IaC-003 · Proxmox API 토큰 노출 → filter-branch 히스토리 정리 + 토큰 재발급 (IaC-003)
 - [x] K8S-001 · Control plane 분리 원칙 확정 (ADR: VM 100 전용 유지)
+
+## Phase 9 — Hermes Agent 안정화 (2026-04-26)
+- [x] ML-011 · Hermes Docker → 네이티브 설치 전환 (qm/systemctl/docker 직접 접근)
+- [x] ML-012 · LLM-in-LLM 크론 루프 해결 — 3개 잡 제거 → host systemd 타이머 이전
+- [x] ML-012 · hermes-canary.timer (09:00), hermes-dspy-optimize.timer (12:00), hermes-dspy-remind.timer (18:00)
+- [x] ML-013 · Hermes cron 잡 정체성 수정 — workdir=/opt/hermes/data 지정으로 SOUL.md 로드
+- [x] ML-003 · scripts/discord-dm.py 작성 — Discord Bot API 직접 호출 (LLM 우회)
+- [x] ML-003 · scripts/hermes-notify 작성 — Claude Code → 사용자 알림 전송
+- [x] ML-003 · Hermes 자발적 Discord DM 확인 ✓ (Carnice-9b 정체성, 한국어, 네이티브 환경)
+- [x] ML-003 · morning-curiosity 크론 잡 등록 (매일 09:00 KST, SOUL.md 로드됨)
+- [x] ML-003 · AGENTS.md, SOUL.md, config.yaml 네이티브 환경 기준으로 업데이트
 
 ## Backlog
 - [x] PVE-004 · Terraform으로 VM 100 코드화 (import → apply, lifecycle ignore_changes 적용)
