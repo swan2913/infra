@@ -59,7 +59,7 @@ def main():
         f"openai/{MODEL_NAME}",
         api_base=API_BASE,
         api_key="none",
-        max_tokens=6000,
+        max_tokens=12000,  # Qwen3.5 thinking 토큰 포함 여유있게
         temperature=0.0,
     )
     dspy.configure(lm=lm)
