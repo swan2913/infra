@@ -59,8 +59,10 @@ def main():
         f"openai/{MODEL_NAME}",
         api_base=API_BASE,
         api_key="none",
-        max_tokens=12000,  # Qwen3.5 thinking 토큰 포함 여유있게
+        max_tokens=4096,
         temperature=0.0,
+        # Qwen3.5-9B (Carnice-9b) thinking 비활성화: /no_think 지시어
+        extra_body={"chat_template_kwargs": {"enable_thinking": False}},
     )
     dspy.configure(lm=lm)
 
