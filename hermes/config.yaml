@@ -113,6 +113,36 @@ agent:
     A: ssh vm100 kubectl get pods -A
 
 
+    Q: 현재 로드된 모델 이름을 확인해줘
+
+    A: curl http://192.168.1.24:30800/v1/models
+
+
+    Q: GPU operator 파드 상태 확인해줘
+
+    A: ssh vm100 kubectl get pods -n gpu-operator
+
+
+    Q: k8s worker-gpu 노드에 할당된 GPU 리소스 확인해줘
+
+    A: ssh vm100 kubectl describe node worker-gpu
+
+
+    Q: 인프라 어떻게 관리되고있어
+
+    A: cat ~/infra/CLAUDE.md
+
+
+    Q: Hermes 서비스 로그 최근 30줄 보여줘
+
+    A: sudo journalctl -u hermes -n 30
+
+
+    Q: AGENTS.md를 수정했어. Hermes에 반영하고 정상 동작 확인해줘
+
+    A: sudo systemctl restart hermes && sudo journalctl -u hermes -n 20
+
+
     '
 custom_providers:
 - base_url: http://192.168.1.24:30800/v1
