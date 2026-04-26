@@ -152,14 +152,18 @@ def main():
     with open(cfg_path, "w") as f:
         yaml.dump(cfg, f, allow_unicode=True, default_flow_style=False)
 
-    # git commit (Hermes 작성자)
+    # git commit + push (Hermes 작성자)
     ts = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
     os.system(
         f'cd ~/infra && git add hermes/config.yaml && '
         f'git -c user.name="Hermes" -c user.email="hermes@192.168.1.94" '
-        f'commit -m "hermes(auto): DSPy 최적화 examples 갱신 {ts}" 2>&1 || true'
+        f'commit -m "hermes(auto): DSPy 최적화 examples 갱신 {ts}" 2>&1 || true && '
+        f'git push origin main 2>&1 || true'
     )
     commit = os.popen("cd ~/infra && git rev-parse --short HEAD 2>/dev/null").read().strip()
+
+    # Hermes 자동 재시작 (최적화 즉시 반영)
+    os.system("sudo systemctl restart hermes 2>&1 || true")
 
     # 상태 파일 기록
     state = {
@@ -168,7 +172,7 @@ def main():
         "optimized": opt_score,
         "demos_count": len(demos[:MAX_DEMOS]),
         "commit": commit,
-        "applied": False,
+        "applied": True,
     }
     with open(STATE_FILE, "w") as f:
         json.dump(state, f, ensure_ascii=False, indent=2)
@@ -186,10 +190,7 @@ def main():
 | 주입된 examples | {len(demos[:MAX_DEMOS])}개 |
 | git commit | {commit} |
 
-`hermes/config.yaml` 갱신 완료. 반영하려면:
-```
-sudo systemctl restart hermes
-```""")
+`hermes/config.yaml` 갱신 및 서비스 재시작 완료.""")
 
     return state
 
