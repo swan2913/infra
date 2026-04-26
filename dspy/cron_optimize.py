@@ -25,7 +25,7 @@ API_BASE   = "http://192.168.1.24:30800/v1"
 MODEL_NAME = "Carnice-9b-Q6_K.gguf"
 TRAIN_RATIO = 0.8
 SEED        = 42
-MAX_EXAMPLES_IN_PROMPT = 18   # 컨텍스트 예산
+MAX_EXAMPLES_IN_PROMPT = 14   # 65K 컨텍스트 기준 예산 (시스템 프롬프트 + 대화 + 툴 결과 고려)
 
 
 # ── Signature ─────────────────────────────────────────────────────────────────
