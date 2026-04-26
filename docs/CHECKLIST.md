@@ -107,6 +107,8 @@
 - [x] ML-014 · DSPy BootstrapFewShot 최적화 실행 → 78.4% → 86.5%
 - [x] ML-014 · Verified Examples 수동 보완 (회귀 복구 + 미커버 케이스) → **100% (37/37)**
 - [x] PVE-003 · VM 102 Windows 테스트 VM Terraform 코드 작성 (UEFI, TPM, VirtIO)
+- [x] PVE-003 · VM 102 terraform apply 완료 (수동 qm create 잔해 정리 후 재생성)
+- [x] ML-015 · Hermes VM 생성 IaC 강제 교정 — qm create → terraform apply DSPy 검증 42케이스 100%
 
 ## Backlog
 - [x] PVE-004 · Terraform으로 VM 100 코드화 (import → apply, lifecycle ignore_changes 적용)
