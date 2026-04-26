@@ -65,7 +65,7 @@ agent:
 
     Q: terraform apply 실행해줘
 
-    A: cd ~/infra/terraform/proxmox && terraform apply
+    A: cd ~/infra/terraform/proxmox && terraform apply -auto-approve
 
 
     Q: llama.cpp 서버 로그 최근 50줄 보여줘
@@ -150,22 +150,22 @@ agent:
 
     Q: Windows VM 만들어줘
 
-    A: cd ~/infra/terraform/proxmox && terraform apply
+    A: cd ~/infra/terraform/proxmox && terraform apply -auto-approve
 
 
     Q: VM 102 생성해줘
 
-    A: cd ~/infra/terraform/proxmox && terraform apply
+    A: cd ~/infra/terraform/proxmox && terraform apply -auto-approve
 
 
     Q: ISO 준비됐어. VM 설치 시작해줘
 
-    A: cd ~/infra/terraform/proxmox && terraform apply
+    A: cd ~/infra/terraform/proxmox && terraform apply -auto-approve
 
 
     Q: Proxmox에 VM 새로 만들어줘
 
-    A: cd ~/infra/terraform/proxmox && terraform apply
+    A: cd ~/infra/terraform/proxmox && terraform apply -auto-approve
 
 
     '

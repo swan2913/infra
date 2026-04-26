@@ -100,8 +100,8 @@ sudo qm reboot <id>
 # VM 생성/변경 — 반드시 Terraform으로 (qm create 금지)
 cat ~/infra/terraform/proxmox/main.tf   # 1. 현재 코드 확인
 # 2. 필요시 main.tf에 리소스 추가
-cd ~/infra/terraform/proxmox && terraform plan   # 3. 변경 내용 검토
-cd ~/infra/terraform/proxmox && terraform apply  # 4. 적용
+cd ~/infra/terraform/proxmox && terraform plan                  # 3. 변경 내용 검토
+cd ~/infra/terraform/proxmox && terraform apply -auto-approve  # 4. 적용
 ```
 
 ### Hermes 서비스 관리
@@ -113,9 +113,8 @@ sudo journalctl -u hermes -n 50
 
 ### Terraform (VM 생성/변경)
 ```bash
-cd ~/infra/terraform/proxmox
-terraform plan
-terraform apply -auto-approve
+cd ~/infra/terraform/proxmox && terraform plan
+cd ~/infra/terraform/proxmox && terraform apply -auto-approve
 ```
 
 ---
