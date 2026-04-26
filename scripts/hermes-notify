@@ -11,7 +11,7 @@ if [ -z "$MSG" ]; then
     exit 1
 fi
 
-HERMES="sudo docker exec hermes /opt/hermes/.venv/bin/hermes"
+HERMES="sudo docker exec --user 10000:10000 hermes /opt/hermes/.venv/bin/hermes"
 
 $HERMES cron create "1m" \
     "[Claude Code 보고] $MSG" \
@@ -19,8 +19,5 @@ $HERMES cron create "1m" \
     --repeat 1 \
     --name "claude-notify-$(date +%s)" \
     > /dev/null 2>&1
-
-# docker exec는 root로 실행되어 jobs.json이 root 소유로 생성됨 → hermes 프로세스가 못 읽음
-sudo chown 10000:10000 /opt/hermes/data/cron/jobs.json 2>/dev/null || true
 
 echo "→ Hermes 통해 Discord 전송 예약 (약 1분 후)"
