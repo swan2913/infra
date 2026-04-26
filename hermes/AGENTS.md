@@ -120,6 +120,44 @@ terraform apply -auto-approve
 
 ---
 
+## 에이전트 설정 변경 후 필수 검증 절차
+
+`AGENTS.md`, `SOUL.md`, `config.yaml` 중 하나라도 수정했으면 반드시 아래 절차를 완료해야 작업이 끝난 것이다.
+
+### 변경 → 반영 → 검증 전체 흐름
+
+```bash
+# 1. 수정 (~/infra/hermes/ 에서)
+# 2. git commit & push (Hermes 작성자로)
+git -c user.name="Hermes" -c user.email="hermes@192.168.1.94" \
+  commit -m "hermes: ..." && git push origin main
+
+# 3. 서비스 재시작 (ExecStartPre가 파일 복사)
+sudo systemctl restart hermes
+
+# 4. 검증 — 아래 3가지 모두 확인
+```
+
+### 검증 체크리스트
+
+```bash
+# [1] 서비스 정상 기동 확인
+sudo systemctl status hermes --no-pager | grep -E "Active|ExecStartPre"
+# 기대값: Active: active (running), ExecStartPre ... status=0/SUCCESS
+
+# [2] Discord 연결 확인
+sudo journalctl -u hermes -n 20 --no-pager | grep -E "Connected|ERROR|FAILURE"
+# 기대값: [Discord] Connected as Hermes Agent
+
+# [3] 변경된 내용이 실제로 배포됐는지 확인
+grep -c "<변경한 키워드>" /opt/hermes/data/AGENTS.md   # 또는 SOUL.md, config.yaml
+# 기대값: 0 이상 (키워드가 존재)
+```
+
+**3가지 중 하나라도 실패하면 원인 파악 후 재시작. 사용자에게 결과 보고.**
+
+---
+
 ## 재시도 규칙 (중요)
 
 같은 명령/작업이 **3회 연속 실패**하면 즉시 중단하고 사용자에게 보고한다.
