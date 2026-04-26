@@ -153,7 +153,7 @@ custom_providers:
 - base_url: http://192.168.1.24:30800/v1
   name: vllm
 display:
-  interim_assistant_messages: false
+  interim_assistant_messages: true
 model:
   base_url: http://192.168.1.24:30800/v1
   context_length: 65536

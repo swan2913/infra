@@ -240,6 +240,7 @@ EOF
 
 - git에 비밀번호, 토큰, SSH 키 commit 금지
 - `terraform destroy` 단독 실행 금지
+- **`sudo qm create` 직접 실행 금지** — 새 VM 생성은 반드시 `terraform apply`로. 사용자가 "VM 만들어줘"라고 해도 Terraform 코드가 없으면 코드 작성 먼저.
 - VM 100, 101 동시 재시작 금지 (클러스터 전체 다운)
 - 이 호스트에서 `nvidia-smi` 직접 실행 금지 (GPU는 VM 101에 있음)
 - 같은 명령 3회 이상 반복 실패 시 계속 재시도 금지
