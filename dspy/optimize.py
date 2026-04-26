@@ -19,30 +19,30 @@ API_BASE    = "http://192.168.1.24:30800/v1"
 MODEL_NAME  = "Carnice-9b-Q6_K.gguf"
 DATASET     = os.path.join(os.path.dirname(__file__), "dataset.json")
 RUNS_DIR    = os.path.join(os.path.dirname(__file__), "runs")
+CONFIG      = os.path.join(os.path.dirname(__file__), "../hermes/config.yaml")
 HERMES_CFG  = "/opt/hermes/data/config.yaml"
 TRAIN_RATIO = 0.8
 SEED        = 42
 
-# ── DSPy Signature ────────────────────────────────────────────────────────────
-class InfraSignature(dspy.Signature):
-    """
-    You are an infrastructure agent on a Proxmox VE host (192.168.1.94).
-    Given a user question about the homelab infrastructure, output the correct
-    shell command to execute. Rules:
-    - GPU/VRAM: use ssh -i /opt/data/vm_key ubuntu@192.168.1.24 nvidia-smi
-    - llama.cpp logs/status: use kubectl logs -n vllm deployment/vllm
-    - k8s state: use kubectl directly (kubectl is installed on this host)
-    - VM management: use qm commands
-    - Terraform: use cd /infra/terraform/proxmox && terraform ...
-    - This host has NO GPU. Never run nvidia-smi directly.
-    """
-    question: str = dspy.InputField(desc="인프라 관련 사용자 질문")
-    command: str  = dspy.OutputField(desc="실행할 쉘 명령어 (한 줄)")
+
+def load_signature():
+    """hermes/config.yaml의 system_prompt를 InfraSignature docstring으로 사용."""
+    cfg_path = os.path.abspath(CONFIG)
+    with open(cfg_path) as f:
+        cfg = yaml.safe_load(f)
+    prompt = cfg["agent"]["system_prompt"]
+
+    class InfraSignature(dspy.Signature):
+        question: str = dspy.InputField(desc="인프라 관련 사용자 질문")
+        command: str  = dspy.OutputField(desc="실행할 쉘 명령어 (한 줄)")
+
+    InfraSignature.__doc__ = prompt
+    return InfraSignature
 
 
 class InfraAgent(dspy.Module):
-    def __init__(self):
-        self.predict = dspy.ChainOfThought(InfraSignature)
+    def __init__(self, signature):
+        self.predict = dspy.ChainOfThought(signature)
 
     def forward(self, question):
         return self.predict(question=question)
@@ -90,8 +90,9 @@ def main():
         f"openai/{MODEL_NAME}",
         api_base=API_BASE,
         api_key="none",
-        max_tokens=6000,
+        max_tokens=4096,
         temperature=0.0,
+        extra_body={"chat_template_kwargs": {"enable_thinking": False}},
     )
     dspy.configure(lm=lm)
 
@@ -117,7 +118,8 @@ def main():
     train_examples = [to_example(d) for d in train_data]
     eval_examples  = [to_example(d) for d in eval_data]
 
-    agent = InfraAgent()
+    InfraSignature = load_signature()
+    agent = InfraAgent(InfraSignature)
 
     # 최적화 전 베이스라인
     print("=== 베이스라인 평가 ===")
