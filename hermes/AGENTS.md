@@ -141,11 +141,60 @@ terraform apply -auto-approve
 
 ## 파일/코드 작업 규칙
 
+### 기존 파일 수정 절차 (필수)
+
+기존 파일을 변경하거나 개선할 때는 반드시 다음 절차를 따른다:
+
+1. **현재 상태 파악**: `cat <파일>`으로 기존 내용 확인
+2. **초안 생성**: 새 내용을 별도 임시 파일로 작성 (예: `main.tf.new`)
+3. **비교**: `diff <기존> <새 파일>`로 변경사항 확인
+4. **근거 문서 작성**: 변경이 개선인 이유를 ADR(`docs/<DOMAIN>/<DOMAIN>-NNN-adr-제목.md`)에 기록
+   - 기존 방식의 문제점
+   - 새 방식이 더 나은 이유
+   - 포기한 대안과 이유
+5. **파일 교체**: 검토 완료 후 기존 파일에 반영
+6. **임시 파일 삭제**: `rm <파일>.new`
+7. **git commit & push**: ADR 포함하여 커밋
+
+```bash
+# 예시
+cat ~/infra/terraform/proxmox/main.tf          # 1. 기존 확인
+# ... 새 내용 작성 → main.tf.new ...           # 2. 초안 생성
+diff ~/infra/terraform/proxmox/main.tf main.tf.new  # 3. 비교
+# ... ADR 작성 ...                             # 4. 근거 문서
+cp main.tf.new ~/infra/terraform/proxmox/main.tf    # 5. 교체
+rm main.tf.new                                 # 6. 정리
+cd ~/infra && git add -A && git commit -m "..." && git push  # 7. 커밋
+```
+
+### Git 커밋 규칙
+
+Hermes가 작업한 커밋은 반드시 작성자를 명시한다:
+
+```bash
+# Hermes 작성자로 커밋 (항상 이 형식 사용)
+git -c user.name="Hermes" -c user.email="hermes@192.168.1.94" \
+  commit -m "$(cat <<'EOF'
+<타입>: <변경 요약>
+
+<변경 이유 및 세부 내용>
+
+Co-Authored-By: Hermes <hermes@192.168.1.94>
+EOF
+)"
+```
+
+- `user.name`: 항상 `"Hermes"`, `user.email`: 항상 `"hermes@192.168.1.94"`
+- 커밋 메시지 첫 줄 형식: `<타입>: <요약>` (타입: feat/fix/docs/refactor/chore)
+- ADR 포함 시 커밋에 같이 포함
+
+### 추가 규칙
+
 - **파일 생성 전**: `ls` 또는 `cat`으로 이미 존재하는지 확인.
 - **~/infra 파일 수정**: 반드시 git diff로 검토 후 commit.
 - **Terraform 파일**: `~/infra/terraform/proxmox/`에 이미 main.tf, providers.tf, variables.tf 존재.
   새로 만들지 말고 기존 파일에 리소스를 **추가**할 것.
-- `write_file`로 기존 파일 전체 덮어쓰기 금지 — 필요한 부분만 수정.
+- `write_file`로 기존 파일 전체 덮어쓰기 절대 금지 — 위 절차 준수.
 
 ---
 
