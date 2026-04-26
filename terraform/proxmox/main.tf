@@ -181,9 +181,6 @@ resource "proxmox_virtual_environment_vm" "windows_test" {
     interface = "ide2"
     file_id   = "local:iso/Win11_25H2_Korean_x64_v2.iso"
   }
-  # bpg/proxmox provider cdrom 블록 1개 제한 — virtio-win.iso는 apply 후 수동 추가
-  # virtio0 디스크가 보이려면 Windows 설치 중 드라이버 로드 필수
-  # sudo qm set 102 --ide3 local:iso/virtio-win.iso,media=cdrom
 
   network_device {
     bridge = "vmbr0"
@@ -203,7 +200,16 @@ resource "proxmox_virtual_environment_vm" "windows_test" {
   started    = false
 
   lifecycle {
-    # ISO를 꺼도 상태 변경이 발생하지 않도록
     ignore_changes = [cdrom]
+  }
+}
+
+# bpg/proxmox cdrom 블록 1개 제한 우회 — virtio-win.iso를 ide3에 추가
+# VM 생성/재생성 시 자동으로 실행됨
+resource "terraform_data" "windows_test_virtio_iso" {
+  triggers_replace = [proxmox_virtual_environment_vm.windows_test.id]
+
+  provisioner "local-exec" {
+    command = "sudo qm set 102 --ide3 local:iso/virtio-win.iso,media=cdrom"
   }
 }
