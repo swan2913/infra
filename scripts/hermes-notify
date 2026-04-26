@@ -11,13 +11,6 @@ if [ -z "$MSG" ]; then
     exit 1
 fi
 
-HERMES="sudo docker exec --user 10000:10000 hermes /opt/hermes/.venv/bin/hermes"
-
-$HERMES cron create "1m" \
-    "[Claude Code 보고] $MSG" \
-    --deliver discord \
-    --repeat 1 \
-    --name "claude-notify-$(date +%s)" \
-    > /dev/null 2>&1
-
-echo "→ Hermes 통해 Discord 전송 예약 (약 1분 후)"
+# 컨테이너 내부에서 Discord Bot API 직접 호출 (LLM 우회)
+sudo docker exec --user 10000:10000 hermes \
+    python3 /infra/scripts/discord-dm.py "[Claude Code 보고] $MSG"
