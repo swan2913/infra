@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-# Hermes를 통해 Discord DM으로 알림 전송
+# Discord DM 알림 전송 — Discord Bot API 직접 호출 (LLM 우회)
 # 사용법: hermes-notify "메시지"
-# Claude Code가 이상 보고 시 사용
 
 set -euo pipefail
 
@@ -11,6 +10,4 @@ if [ -z "$MSG" ]; then
     exit 1
 fi
 
-# 컨테이너 내부에서 Discord Bot API 직접 호출 (LLM 우회)
-sudo docker exec --user 10000:10000 hermes \
-    python3 /infra/scripts/discord-dm.py "[Claude Code 보고] $MSG"
+python3 /home/ksh/infra/scripts/discord-dm.py "[Claude Code 보고] $MSG"

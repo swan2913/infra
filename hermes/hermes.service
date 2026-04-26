@@ -1,0 +1,16 @@
+[Unit]
+Description=Hermes Autonomous Infrastructure Agent
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=ksh
+Restart=always
+RestartSec=10
+EnvironmentFile=/opt/hermes/.env
+Environment=HERMES_HOME=/opt/hermes/data
+ExecStartPre=/bin/bash -c 'cp /home/ksh/infra/hermes/config.yaml /opt/hermes/data/config.yaml && cp /home/ksh/infra/hermes/AGENTS.md /opt/hermes/data/AGENTS.md && cp /home/ksh/infra/hermes/SOUL.md /opt/hermes/data/SOUL.md'
+ExecStart=/opt/hermes-agent/.venv/bin/hermes gateway run
+
+[Install]
+WantedBy=multi-user.target

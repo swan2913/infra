@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Discord DM 직접 전송 — hermes 컨테이너 내부에서 실행, LLM 없이 Discord Bot API 직접 호출
-Usage: docker exec --user 10000:10000 hermes python3 /infra/scripts/discord-dm.py "message"
+"""Discord DM 직접 전송 — LLM 없이 Discord Bot API 직접 호출
+Usage: python3 /home/ksh/infra/scripts/discord-dm.py "message"
 """
 import sys
 import json
@@ -8,13 +8,23 @@ import os
 import urllib.request
 import urllib.error
 
+ENV_FILE = "/opt/hermes/.env"
 USER_ID = "1372389480618659880"  # goseunghwan_54963
 
 
-def send_dm(msg: str):
+def get_token() -> str:
     token = os.environ.get("DISCORD_BOT_TOKEN", "")
-    if not token:
-        raise RuntimeError("DISCORD_BOT_TOKEN not set in container environment")
+    if token:
+        return token
+    with open(ENV_FILE) as f:
+        for line in f:
+            if line.startswith("DISCORD_BOT_TOKEN="):
+                return line.strip().split("=", 1)[1]
+    raise RuntimeError("DISCORD_BOT_TOKEN not found")
+
+
+def send_dm(msg: str):
+    token = get_token()
 
     headers = {
         "Authorization": f"Bot {token}",
