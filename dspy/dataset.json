@@ -1,417 +1,224 @@
 [
   {
     "question": "GPU VRAM 현재 사용량을 확인해줘",
-    "expected_command": "ssh -i /opt/data/vm_key ubuntu@192.168.1.24 nvidia-smi",
-    "must_contain": [
-      "ssh",
-      "192.168.1.24",
-      "nvidia-smi"
-    ],
-    "must_not_contain": [
-      "nvidia-smi\n",
-      "lspci",
-      "proc/driver"
-    ]
+    "expected_command": "ssh vm101 nvidia-smi",
+    "must_contain": ["ssh", "vm101", "nvidia-smi"],
+    "must_not_contain": ["opt/data/vm_key", "lspci", "proc/driver", "192.168.1.24 nvidia-smi\n"]
   },
   {
     "question": "RTX 3080 온도와 전력 사용량 알려줘",
-    "expected_command": "ssh -i /opt/data/vm_key ubuntu@192.168.1.24 nvidia-smi",
-    "must_contain": [
-      "ssh",
-      "192.168.1.24",
-      "nvidia-smi"
-    ],
-    "must_not_contain": [
-      "proc/driver",
-      "lspci"
-    ]
+    "expected_command": "ssh vm101 nvidia-smi",
+    "must_contain": ["ssh", "vm101", "nvidia-smi"],
+    "must_not_contain": ["proc/driver", "lspci", "opt/data"]
   },
   {
     "question": "GPU 사용률이 얼마나 되는지 실시간으로 확인해줘",
-    "expected_command": "ssh -i /opt/data/vm_key ubuntu@192.168.1.24 nvidia-smi dmon",
-    "must_contain": [
-      "ssh",
-      "192.168.1.24",
-      "nvidia-smi"
-    ],
-    "must_not_contain": [
-      "proc/driver"
-    ]
+    "expected_command": "ssh vm101 nvidia-smi dmon",
+    "must_contain": ["ssh", "vm101", "nvidia-smi"],
+    "must_not_contain": ["proc/driver", "opt/data"]
+  },
+  {
+    "question": "VM 101 내부에서 NVIDIA 드라이버 버전 확인해줘",
+    "expected_command": "ssh vm101 nvidia-smi",
+    "must_contain": ["ssh", "vm101"],
+    "must_not_contain": ["kubectl exec", "opt/data/vm_key"]
   },
   {
     "question": "llama.cpp 서버 로그 최근 50줄 보여줘",
-    "expected_command": "kubectl logs -n vllm deployment/vllm --tail=50",
-    "must_contain": [
-      "kubectl",
-      "logs",
-      "vllm"
-    ],
-    "must_not_contain": [
-      "ssh",
-      "ps aux",
-      "journalctl"
-    ]
+    "expected_command": "ssh vm100 kubectl logs -n vllm deployment/vllm --tail=50",
+    "must_contain": ["ssh", "vm100", "kubectl", "logs", "vllm"],
+    "must_not_contain": ["ps aux", "journalctl", "ssh vm101"]
   },
   {
     "question": "추론 서버가 정상 작동 중인지 확인해줘",
-    "expected_command": "kubectl get pods -n vllm",
-    "must_contain": [
-      "kubectl",
-      "vllm"
-    ],
-    "must_not_contain": [
-      "ps aux",
-      "llama-server"
-    ]
+    "expected_command": "ssh vm100 kubectl get pods -n vllm",
+    "must_contain": ["ssh", "vm100", "kubectl", "vllm"],
+    "must_not_contain": ["ps aux", "llama-server", "ssh vm101"]
+  },
+  {
+    "question": "llama.cpp 추론 속도(tokens/sec)를 로그에서 확인해줘",
+    "expected_command": "ssh vm100 kubectl logs -n vllm deployment/vllm",
+    "must_contain": ["ssh", "vm100", "kubectl", "logs", "vllm"],
+    "must_not_contain": ["ps aux", "ssh vm101"]
   },
   {
     "question": "llama.cpp API가 응답하는지 health check해줘",
     "expected_command": "curl http://192.168.1.24:30800/health",
-    "must_contain": [
-      "curl",
-      "192.168.1.24",
-      "30800"
-    ],
-    "must_not_contain": [
-      "localhost",
-      "127.0.0.1"
-    ]
+    "must_contain": ["curl", "192.168.1.24", "30800"],
+    "must_not_contain": ["localhost", "127.0.0.1"]
   },
   {
     "question": "현재 로드된 모델 이름을 확인해줘",
     "expected_command": "curl http://192.168.1.24:30800/v1/models",
-    "must_contain": [
-      "curl",
-      "192.168.1.24",
-      "30800"
-    ],
-    "must_not_contain": [
-      "localhost"
-    ]
+    "must_contain": ["curl", "192.168.1.24", "30800"],
+    "must_not_contain": ["localhost"]
   },
   {
     "question": "k8s 클러스터 노드 상태 확인해줘",
-    "expected_command": "kubectl get nodes",
-    "must_contain": [
-      "kubectl",
-      "nodes"
-    ],
-    "must_not_contain": [
-      "ssh vm100",
-      "ssh vm101"
-    ]
+    "expected_command": "ssh vm100 kubectl get nodes",
+    "must_contain": ["ssh", "vm100", "kubectl", "nodes"],
+    "must_not_contain": ["ssh vm101", "qm"]
   },
   {
     "question": "모든 네임스페이스의 파드 상태를 보여줘",
-    "expected_command": "kubectl get pods -A",
-    "must_contain": [
-      "kubectl",
-      "pods"
-    ],
-    "must_not_contain": [
-      "ssh",
-      "docker"
-    ]
+    "expected_command": "ssh vm100 kubectl get pods -A",
+    "must_contain": ["ssh", "vm100", "kubectl", "pods"],
+    "must_not_contain": ["docker", "ssh vm101"]
   },
   {
     "question": "ArgoCD 앱 동기화 상태 확인해줘",
-    "expected_command": "kubectl get app -n argocd",
-    "must_contain": [
-      "kubectl",
-      "argocd"
-    ],
-    "must_not_contain": [
-      "ssh",
-      "curl"
-    ]
+    "expected_command": "ssh vm100 kubectl get app -n argocd",
+    "must_contain": ["ssh", "vm100", "kubectl", "argocd"],
+    "must_not_contain": ["curl", "ssh vm101"]
   },
   {
     "question": "vllm 파드를 재시작해줘",
-    "expected_command": "kubectl rollout restart deployment/vllm -n vllm",
-    "must_contain": [
-      "kubectl",
-      "rollout",
-      "restart",
-      "vllm"
-    ],
-    "must_not_contain": [
-      "kubectl delete",
-      "kubectl apply"
-    ]
+    "expected_command": "ssh vm100 kubectl rollout restart deployment/vllm -n vllm",
+    "must_contain": ["ssh", "vm100", "kubectl", "rollout", "restart", "vllm"],
+    "must_not_contain": ["kubectl delete", "kubectl apply", "ssh vm101"]
   },
   {
     "question": "ArgoCD에서 vllm 앱을 강제 동기화해줘",
-    "expected_command": "kubectl patch app vllm -n argocd",
-    "must_contain": [
-      "vllm",
-      "argocd"
-    ],
-    "must_not_contain": []
-  },
-  {
-    "question": "현재 Proxmox에서 실행 중인 VM 목록 보여줘",
-    "expected_command": "qm list",
-    "must_contain": [
-      "qm"
-    ],
-    "must_not_contain": [
-      "kubectl",
-      "ssh",
-      "curl"
-    ]
-  },
-  {
-    "question": "VM 100 상태 확인해줘",
-    "expected_command": "qm status 100",
-    "must_contain": [
-      "qm",
-      "100"
-    ],
-    "must_not_contain": [
-      "kubectl",
-      "curl"
-    ]
-  },
-  {
-    "question": "VM 101 재시작해줘",
-    "expected_command": "qm reboot 101",
-    "must_contain": [
-      "qm",
-      "101"
-    ],
-    "must_not_contain": [
-      "kubectl",
-      "ssh"
-    ]
-  },
-  {
-    "question": "terraform으로 인프라 변경사항 미리 보여줘",
-    "expected_command": "cd /infra/terraform/proxmox && terraform plan",
-    "must_contain": [
-      "terraform",
-      "plan",
-      "/infra"
-    ],
-    "must_not_contain": [
-      "kubectl",
-      "ssh"
-    ]
-  },
-  {
-    "question": "terraform apply 실행해줘",
-    "expected_command": "cd /infra/terraform/proxmox && terraform apply",
-    "must_contain": [
-      "terraform",
-      "apply",
-      "/infra"
-    ],
-    "must_not_contain": [
-      "kubectl"
-    ]
-  },
-  {
-    "question": "infra 리포 최신 변경사항 git pull해줘",
-    "expected_command": "cd /infra && git pull origin main",
-    "must_contain": [
-      "git",
-      "pull",
-      "/infra"
-    ],
-    "must_not_contain": [
-      "ssh",
-      "kubectl"
-    ]
-  },
-  {
-    "question": "infra 변경사항을 git push해줘",
-    "expected_command": "cd /infra && git push origin main",
-    "must_contain": [
-      "git",
-      "push",
-      "/infra"
-    ],
-    "must_not_contain": [
-      "ssh vm"
-    ]
-  },
-  {
-    "question": "VM 101 내부에서 NVIDIA 드라이버 버전 확인해줘",
-    "expected_command": "ssh -i /opt/data/vm_key ubuntu@192.168.1.24 nvidia-smi --query-gpu=driver_version",
-    "must_contain": [
-      "ssh",
-      "192.168.1.24"
-    ],
-    "must_not_contain": [
-      "kubectl exec",
-      "nvidia-smi\n"
-    ]
-  },
-  {
-    "question": "llama.cpp 추론 속도(tokens/sec)를 로그에서 확인해줘",
-    "expected_command": "kubectl logs -n vllm deployment/vllm --tail=100",
-    "must_contain": [
-      "kubectl",
-      "logs",
-      "vllm"
-    ],
-    "must_not_contain": [
-      "ssh",
-      "ps aux"
-    ]
-  },
-  {
-    "question": "Hermes 서비스 로그 최근 30줄 보여줘",
-    "expected_command": "journalctl -u hermes -n 30",
-    "must_contain": [
-      "journalctl",
-      "hermes"
-    ],
-    "must_not_contain": [
-      "kubectl",
-      "ssh",
-      "docker logs"
-    ]
+    "expected_command": "ssh vm100 kubectl patch app vllm -n argocd",
+    "must_contain": ["ssh", "vm100", "vllm", "argocd"],
+    "must_not_contain": ["ssh vm101"]
   },
   {
     "question": "vllm 네임스페이스 파드의 리소스 사용량 확인해줘",
-    "expected_command": "kubectl top pod -n vllm",
-    "must_contain": [
-      "kubectl",
-      "top",
-      "vllm"
-    ],
-    "must_not_contain": [
-      "ssh",
-      "ps aux"
-    ]
+    "expected_command": "ssh vm100 kubectl top pod -n vllm",
+    "must_contain": ["ssh", "vm100", "kubectl", "top", "vllm"],
+    "must_not_contain": ["ps aux", "ssh vm101"]
   },
   {
     "question": "k8s worker-gpu 노드에 할당된 GPU 리소스 확인해줘",
-    "expected_command": "kubectl describe node worker-gpu",
-    "must_contain": [
-      "kubectl",
-      "describe",
-      "worker-gpu"
-    ],
-    "must_not_contain": [
-      "ssh",
-      "qm"
-    ]
+    "expected_command": "ssh vm100 kubectl describe node worker-gpu",
+    "must_contain": ["ssh", "vm100", "kubectl", "describe", "worker-gpu"],
+    "must_not_contain": ["qm", "ssh vm101"]
   },
   {
     "question": "GPU operator 파드 상태 확인해줘",
-    "expected_command": "kubectl get pods -n gpu-operator",
-    "must_contain": [
-      "kubectl",
-      "gpu-operator"
-    ],
-    "must_not_contain": [
-      "ssh",
-      "-n vllm"
-    ]
-  },
-  {
-    "question": "pve 프로바이저 어떻게 관리되고있어",
-    "expected_command": "cat /infra/terraform/proxmox/providers.tf",
-    "must_contain": [
-      "/infra/terraform/proxmox/providers.tf"
-    ],
-    "must_not_contain": [
-      "~/infra",
-      "qm",
-      "kubectl"
-    ]
-  },
-  {
-    "question": "pve 프로바이저 뭐 쓰고있어",
-    "expected_command": "cat /infra/terraform/proxmox/providers.tf",
-    "must_contain": [
-      "/infra/terraform/proxmox/providers.tf"
-    ],
-    "must_not_contain": [
-      "~/infra",
-      "kubectl",
-      "qm"
-    ]
-  },
-  {
-    "question": "terraform 어떻게 구성되어있어",
-    "expected_command": "cat /infra/terraform/proxmox/main.tf",
-    "must_contain": [
-      "/infra/terraform/proxmox"
-    ],
-    "must_not_contain": [
-      "~/infra",
-      "kubectl"
-    ]
-  },
-  {
-    "question": "인프라 어떻게 관리되고있어",
-    "expected_command": "cat /infra/CLAUDE.md",
-    "must_contain": [
-      "/infra/CLAUDE.md"
-    ],
-    "must_not_contain": [
-      "~/infra",
-      "kubectl",
-      "qm"
-    ]
-  },
-  {
-    "question": "infra 폴더 구조 보여줘",
-    "expected_command": "ls /infra/",
-    "must_contain": [
-      "/infra"
-    ],
-    "must_not_contain": [
-      "~/infra"
-    ]
-  },
-  {
-    "question": "ADR 문서 어디있어",
-    "expected_command": "ls /infra/docs/",
-    "must_contain": [
-      "/infra/docs"
-    ],
-    "must_not_contain": [
-      "~/infra",
-      "kubectl"
-    ]
-  },
-  {
-    "question": "Hermes 설정 확인해줘",
-    "expected_command": "cat /infra/hermes/config.yaml",
-    "must_contain": [
-      "hermes"
-    ],
-    "must_not_contain": [
-      "~/infra"
-    ]
-  },
-  {
-    "question": "Hermes 서비스 재시작해줘",
-    "expected_command": "systemctl restart hermes",
-    "must_contain": [
-      "systemctl",
-      "restart",
-      "hermes"
-    ],
-    "must_not_contain": [
-      "kubectl",
-      "docker restart"
-    ]
+    "expected_command": "ssh vm100 kubectl get pods -n gpu-operator",
+    "must_contain": ["ssh", "vm100", "kubectl", "gpu-operator"],
+    "must_not_contain": ["-n vllm", "ssh vm101"]
   },
   {
     "question": "k8s 전체 파드 상태 확인해줘",
-    "expected_command": "kubectl get pods -A",
-    "must_contain": [
-      "kubectl",
-      "pods",
-      "-a"
-    ],
-    "must_not_contain": [
-      "ssh",
-      "docker"
-    ]
+    "expected_command": "ssh vm100 kubectl get pods -A",
+    "must_contain": ["ssh", "vm100", "kubectl", "pods"],
+    "must_not_contain": ["docker", "ssh vm101"]
+  },
+  {
+    "question": "현재 Proxmox에서 실행 중인 VM 목록 보여줘",
+    "expected_command": "sudo qm list",
+    "must_contain": ["qm", "list"],
+    "must_not_contain": ["kubectl", "ssh vm"]
+  },
+  {
+    "question": "VM 100 상태 확인해줘",
+    "expected_command": "sudo qm status 100",
+    "must_contain": ["qm", "100"],
+    "must_not_contain": ["kubectl", "curl"]
+  },
+  {
+    "question": "VM 101 재시작해줘",
+    "expected_command": "sudo qm reboot 101",
+    "must_contain": ["qm", "101"],
+    "must_not_contain": ["kubectl", "ssh vm101 reboot"]
+  },
+  {
+    "question": "terraform으로 인프라 변경사항 미리 보여줘",
+    "expected_command": "cd ~/infra/terraform/proxmox && terraform plan",
+    "must_contain": ["terraform", "plan", "infra"],
+    "must_not_contain": ["kubectl", "/infra/terraform"]
+  },
+  {
+    "question": "terraform apply 실행해줘",
+    "expected_command": "cd ~/infra/terraform/proxmox && terraform apply",
+    "must_contain": ["terraform", "apply", "infra"],
+    "must_not_contain": ["kubectl", "/infra/terraform"]
+  },
+  {
+    "question": "infra 리포 최신 변경사항 git pull해줘",
+    "expected_command": "cd ~/infra && git pull origin main",
+    "must_contain": ["git", "pull", "infra"],
+    "must_not_contain": ["ssh", "/infra &&"]
+  },
+  {
+    "question": "infra 변경사항을 git push해줘",
+    "expected_command": "cd ~/infra && git push origin main",
+    "must_contain": ["git", "push", "infra"],
+    "must_not_contain": ["/infra &&", "ssh vm"]
+  },
+  {
+    "question": "Hermes 서비스 로그 최근 30줄 보여줘",
+    "expected_command": "sudo journalctl -u hermes -n 30",
+    "must_contain": ["journalctl", "hermes"],
+    "must_not_contain": ["kubectl", "docker logs"]
+  },
+  {
+    "question": "Hermes 서비스 재시작해줘",
+    "expected_command": "sudo systemctl restart hermes",
+    "must_contain": ["systemctl", "restart", "hermes"],
+    "must_not_contain": ["kubectl", "docker restart"]
+  },
+  {
+    "question": "pve 프로바이저 어떻게 관리되고있어",
+    "expected_command": "cat ~/infra/terraform/proxmox/providers.tf",
+    "must_contain": ["infra/terraform/proxmox/providers.tf"],
+    "must_not_contain": ["/infra/terraform", "kubectl", "qm"]
+  },
+  {
+    "question": "pve 프로바이저 뭐 쓰고있어",
+    "expected_command": "cat ~/infra/terraform/proxmox/providers.tf",
+    "must_contain": ["infra/terraform/proxmox/providers.tf"],
+    "must_not_contain": ["/infra/terraform", "kubectl", "qm"]
+  },
+  {
+    "question": "terraform 어떻게 구성되어있어",
+    "expected_command": "cat ~/infra/terraform/proxmox/main.tf",
+    "must_contain": ["infra/terraform/proxmox"],
+    "must_not_contain": ["/infra/terraform", "kubectl"]
+  },
+  {
+    "question": "인프라 어떻게 관리되고있어",
+    "expected_command": "cat ~/infra/CLAUDE.md",
+    "must_contain": ["infra/claude.md"],
+    "must_not_contain": ["/infra/claude", "kubectl", "qm"]
+  },
+  {
+    "question": "infra 폴더 구조 보여줘",
+    "expected_command": "ls ~/infra/",
+    "must_contain": ["infra"],
+    "must_not_contain": ["ls /infra"]
+  },
+  {
+    "question": "ADR 문서 어디있어",
+    "expected_command": "ls ~/infra/docs/",
+    "must_contain": ["infra/docs"],
+    "must_not_contain": ["/infra/docs", "kubectl"]
+  },
+  {
+    "question": "Hermes 설정 확인해줘",
+    "expected_command": "cat ~/infra/hermes/config.yaml",
+    "must_contain": ["infra/hermes", "hermes"],
+    "must_not_contain": ["/infra/hermes", "opt/hermes/data"]
+  },
+  {
+    "question": "Hermes AGENTS.md 수정 후 서비스 재시작하고 정상 동작 확인해줘",
+    "expected_command": "sudo systemctl restart hermes && sudo journalctl -u hermes -n 20",
+    "must_contain": ["systemctl", "restart", "hermes", "journalctl"],
+    "must_not_contain": ["docker restart", "kubectl"]
+  },
+  {
+    "question": "Hermes 설정 변경됐어. 배포 완료됐는지 검증해줘",
+    "expected_command": "sudo systemctl status hermes && sudo journalctl -u hermes -n 20 | grep Connected",
+    "must_contain": ["systemctl", "hermes", "journalctl"],
+    "must_not_contain": ["docker", "kubectl"]
+  },
+  {
+    "question": "infra 파일을 수정하기 전에 현재 내용을 먼저 확인해줘",
+    "expected_command": "cat ~/infra/hermes/config.yaml",
+    "must_contain": ["cat", "infra"],
+    "must_not_contain": ["write_file", "echo >"]
   }
 ]
