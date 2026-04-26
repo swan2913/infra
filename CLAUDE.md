@@ -81,3 +81,35 @@ cd ~/infra && git status && git log --oneline -5
 - VM 리소스 변경 → `terraform/proxmox/main.tf`
 - VM 내 설정 변경 → `ansible/playbooks/<action>.yml`
 - 문서 추가 → `docs/<DOMAIN>/<DOMAIN>-<NNN>-<slug>.md`
+
+## Hermes Agent 관리 규칙
+
+### 설정 파일 위치 (git 정본)
+| 파일 | 경로 | 역할 |
+|------|------|------|
+| `config.yaml` | `hermes/config.yaml` | 모델 설정, system prompt, Verified Examples |
+| `AGENTS.md` | `hermes/AGENTS.md` | 에이전트 행동 규칙, 서비스 위치 참조 |
+| `SOUL.md` | `hermes/SOUL.md` | 에이전트 정체성, 소통 방식 |
+| `hermes.service` | `/opt/hermes/hermes.service` | systemd 서비스 정의 (변경 시 `/etc/systemd/system/`에도 복사) |
+
+### 수정 → 반영 절차
+```bash
+# 1. infra 레포에서 파일 수정
+vi ~/infra/hermes/config.yaml   # 또는 AGENTS.md, SOUL.md
+
+# 2. git commit
+cd ~/infra && git add hermes/ && git commit -m "hermes: ..." && git push origin main
+
+# 3. 서비스 재시작 (ExecStartPre가 infra/hermes/ → /opt/hermes/data/ 복사)
+sudo systemctl restart hermes
+```
+
+### git 관리 제외 항목 (`/opt/hermes/data/` 전용)
+- `.env` — Discord 토큰, API 키
+- `vm_key` — SSH 개인키
+- `state.db` — 런타임 상태
+- `sessions/`, `memories/`, `logs/` — 런타임 데이터
+
+### 주의
+- `/opt/hermes/data/config.yaml`을 직접 수정하지 않는다 — 재시작 시 덮어씌워진다.
+- `hermes.service` 변경 시 `sudo cp /opt/hermes/hermes.service /etc/systemd/system/hermes.service && sudo systemctl daemon-reload` 필요.
