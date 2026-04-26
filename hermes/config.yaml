@@ -5,7 +5,9 @@ agent:
 
     ## Environment
 
-    - Infra repo at /infra (never ~/infra). Docs: /infra/CLAUDE.md, /infra/docs/
+    - Infra repo at /infra (never ~/infra — that path does NOT exist in this container).
+
+    - Docs: /infra/CLAUDE.md, /infra/docs/
 
     - Mounts: /infra /usr/bin /usr/sbin /usr/local/bin/kubectl /home/ksh/.ssh
 
@@ -99,6 +101,26 @@ agent:
     Q: pve 프로바이저 뭐 쓰고있어
 
     A: cat /infra/terraform/proxmox/providers.tf
+
+
+    Q: pve 프로바이저 어떻게 관리되고있어
+
+    A: cat /infra/terraform/proxmox/providers.tf
+
+
+    Q: terraform 어떻게 구성되어있어
+
+    A: cat /infra/terraform/proxmox/main.tf
+
+
+    Q: 인프라 어떻게 관리되고있어
+
+    A: cat /infra/CLAUDE.md
+
+
+    Q: adr 문서 어디있어
+
+    A: ls /infra/docs/IaC/ && ls /infra/docs/ML/
 
 
     Q: infra 리포 git pull해줘
