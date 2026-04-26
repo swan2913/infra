@@ -57,7 +57,7 @@ resource "proxmox_virtual_environment_vm" "control_plane" {
     ignore_changes = [
       disk[0].file_id,
       disk[0].file_format,
-      memory[0].dedicated,  # PVE 내부 반올림(4096→4196) 허용
+      memory[0].dedicated, # PVE 내부 반올림(4096→4196) 허용
     ]
   }
 }
@@ -129,8 +129,8 @@ resource "proxmox_virtual_environment_vm" "worker_gpu" {
     type = "virtio"
   }
 
-  on_boot  = true
-  started  = true
+  on_boot       = true
+  started       = true
   scsi_hardware = "virtio-scsi-single"
 }
 
@@ -143,22 +143,22 @@ resource "proxmox_virtual_environment_vm" "windows_test" {
   vm_id     = 102
 
   machine = "q35"
-  bios    = "ovmf"  # UEFI — Windows 11 필수
+  bios    = "ovmf" # UEFI — Windows 11 필수
 
   cpu {
     cores   = 4
     sockets = 1
-    type    = "x86-64-v2-AES"
+    type    = "host"
   }
 
   memory {
-    dedicated = 8192  # 8GB
+    dedicated = 8192 # 8GB
   }
 
   # EFI 디스크 (OVMF UEFI 필수)
   efi_disk {
-    datastore_id = "local-lvm"
-    type         = "4m"
+    datastore_id      = "local-lvm"
+    type              = "4m"
     pre_enrolled_keys = false
   }
 
@@ -168,13 +168,12 @@ resource "proxmox_virtual_environment_vm" "windows_test" {
     version      = "v2.0"
   }
 
-  # 시스템 디스크 — VirtIO SCSI (Windows 설치 중 VirtIO 드라이버 필요)
+  # 시스템 디스크 — VirtIO Block (Windows 설치 중 VirtIO 드라이버 필요)
   disk {
     datastore_id = "local-lvm"
-    interface    = "scsi0"
+    interface    = "virtio0"
     size         = 60
-    iothread     = true
-    discard      = "on"
+    backup       = false
   }
 
   # Windows 11 ISO (한국어, 25H2)
@@ -195,13 +194,12 @@ resource "proxmox_virtual_environment_vm" "windows_test" {
   }
 
   vga {
-    type = "qxl"
+    type = "virtio"
   }
 
-  boot_order    = ["ide2", "scsi0"]
-  on_boot       = false
-  started       = false
-  scsi_hardware = "virtio-scsi-single"
+  boot_order = ["ide2", "virtio0"]
+  on_boot    = false
+  started    = false
 
   lifecycle {
     # ISO를 꺼도 상태 변경이 발생하지 않도록
