@@ -1,4 +1,4 @@
-# 기존 cloud image 참조 (이미 /var/lib/vz/template/iso/ubuntu-24.04-cloud.img 존재)
+# Ubuntu cloud image (VM 100/101 용)
 data "proxmox_virtual_environment_file" "ubuntu_cloud_image" {
   content_type = "iso"
   datastore_id = "local"
@@ -132,4 +132,79 @@ resource "proxmox_virtual_environment_vm" "worker_gpu" {
   on_boot  = true
   started  = true
   scsi_hardware = "virtio-scsi-single"
+}
+
+# VM 102 — Windows 테스트 VM
+# 사전 조건: Windows ISO를 /var/lib/vz/template/iso/windows.iso 에 업로드
+# VirtIO 드라이버 ISO: /var/lib/vz/template/iso/virtio-win.iso (자동 다운로드)
+resource "proxmox_virtual_environment_vm" "windows_test" {
+  name      = "windows-test"
+  node_name = "pve"
+  vm_id     = 102
+
+  machine = "q35"
+  bios    = "ovmf"  # UEFI — Windows 11 필수
+
+  cpu {
+    cores   = 4
+    sockets = 1
+    type    = "x86-64-v2-AES"
+  }
+
+  memory {
+    dedicated = 8192  # 8GB
+  }
+
+  # EFI 디스크 (OVMF UEFI 필수)
+  efi_disk {
+    datastore_id = "local-lvm"
+    type         = "4m"
+    pre_enrolled_keys = false
+  }
+
+  # TPM (Windows 11 필수)
+  tpm_state {
+    datastore_id = "local-lvm"
+    version      = "v2.0"
+  }
+
+  # 시스템 디스크 — VirtIO SCSI (Windows 설치 중 VirtIO 드라이버 필요)
+  disk {
+    datastore_id = "local-lvm"
+    interface    = "scsi0"
+    size         = 60
+    iothread     = true
+    discard      = "on"
+  }
+
+  # Windows 11 ISO (한국어, 25H2)
+  cdrom {
+    interface = "ide2"
+    file_id   = "local:iso/Win11_25H2_Korean_x64_v2.iso"
+  }
+  # VirtIO 드라이버 ISO: bpg/proxmox cdrom 단일 제한으로 apply 후 별도 추가
+  # sudo qm set 102 --ide3 local:iso/virtio-win.iso,media=cdrom
+
+  network_device {
+    bridge = "vmbr0"
+    model  = "virtio"
+  }
+
+  operating_system {
+    type = "win11"
+  }
+
+  vga {
+    type = "qxl"
+  }
+
+  boot_order    = ["ide2", "scsi0"]
+  on_boot       = false
+  started       = false
+  scsi_hardware = "virtio-scsi-single"
+
+  lifecycle {
+    # ISO를 꺼도 상태 변경이 발생하지 않도록
+    ignore_changes = [cdrom]
+  }
 }
