@@ -143,6 +143,11 @@ agent:
     A: sudo systemctl restart hermes && sudo journalctl -u hermes -n 20
 
 
+    Q: Hermes 서비스가 어디서 실행되고있어?
+
+    A: sudo systemctl status hermes
+
+
     '
 custom_providers:
 - base_url: http://192.168.1.24:30800/v1
