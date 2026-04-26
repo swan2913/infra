@@ -148,5 +148,59 @@
     "expected_command": "kubectl get pods -n gpu-operator",
     "must_contain": ["kubectl", "gpu-operator"],
     "must_not_contain": ["ssh", "nvidia-smi"]
+  },
+  {
+    "question": "pve 프로바이저 어떻게 관리되고있어",
+    "expected_command": "cat /infra/terraform/proxmox/providers.tf",
+    "must_contain": ["/infra/terraform/proxmox/providers.tf"],
+    "must_not_contain": ["~/infra", "qm", "kubectl"]
+  },
+  {
+    "question": "pve 프로바이저 뭐 쓰고있어",
+    "expected_command": "cat /infra/terraform/proxmox/providers.tf",
+    "must_contain": ["/infra/terraform/proxmox/providers.tf"],
+    "must_not_contain": ["~/infra", "kubectl", "qm"]
+  },
+  {
+    "question": "terraform 어떻게 구성되어있어",
+    "expected_command": "cat /infra/terraform/proxmox/main.tf",
+    "must_contain": ["/infra/terraform/proxmox"],
+    "must_not_contain": ["~/infra", "kubectl"]
+  },
+  {
+    "question": "인프라 어떻게 관리되고있어",
+    "expected_command": "cat /infra/CLAUDE.md",
+    "must_contain": ["/infra/CLAUDE.md"],
+    "must_not_contain": ["~/infra", "kubectl", "qm"]
+  },
+  {
+    "question": "infra 폴더 구조 보여줘",
+    "expected_command": "ls /infra/",
+    "must_contain": ["/infra"],
+    "must_not_contain": ["~/infra"]
+  },
+  {
+    "question": "ADR 문서 어디있어",
+    "expected_command": "ls /infra/docs/",
+    "must_contain": ["/infra/docs"],
+    "must_not_contain": ["~/infra", "kubectl"]
+  },
+  {
+    "question": "Hermes 설정 확인해줘",
+    "expected_command": "cat /infra/hermes/config.yaml",
+    "must_contain": ["/infra/hermes/config.yaml"],
+    "must_not_contain": ["~/infra", "/opt/hermes/data"]
+  },
+  {
+    "question": "Hermes 서비스 재시작해줘",
+    "expected_command": "systemctl restart hermes",
+    "must_contain": ["systemctl", "restart", "hermes"],
+    "must_not_contain": ["kubectl", "docker restart"]
+  },
+  {
+    "question": "k8s 전체 파드 상태 확인해줘",
+    "expected_command": "kubectl get pods -A",
+    "must_contain": ["kubectl", "pods", "-a"],
+    "must_not_contain": ["ssh", "docker"]
   }
 ]
