@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# Hermes를 통해 Discord DM으로 알림 전송
+# 사용법: hermes-notify "메시지"
+# Claude Code가 이상 보고 시 사용
+
+set -euo pipefail
+
+MSG="${1:-}"
+if [ -z "$MSG" ]; then
+    echo "Usage: hermes-notify <message>" >&2
+    exit 1
+fi
+
+HERMES="sudo docker exec hermes /opt/hermes/.venv/bin/hermes"
+
+$HERMES cron create "1m" \
+    "[Claude Code 보고] $MSG" \
+    --deliver discord \
+    --repeat 1 \
+    --name "claude-notify-$(date +%s)" \
+    > /dev/null 2>&1
+
+echo "→ Hermes 통해 Discord 전송 예약 (약 1분 후)"
