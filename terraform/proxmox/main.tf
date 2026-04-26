@@ -181,7 +181,8 @@ resource "proxmox_virtual_environment_vm" "windows_test" {
     interface = "ide2"
     file_id   = "local:iso/Win11_25H2_Korean_x64_v2.iso"
   }
-  # VirtIO 드라이버 ISO: bpg/proxmox cdrom 단일 제한으로 apply 후 별도 추가
+  # bpg/proxmox provider cdrom 블록 1개 제한 — virtio-win.iso는 apply 후 수동 추가
+  # virtio0 디스크가 보이려면 Windows 설치 중 드라이버 로드 필수
   # sudo qm set 102 --ide3 local:iso/virtio-win.iso,media=cdrom
 
   network_device {
