@@ -97,9 +97,21 @@
 - [x] ML-003 · morning-curiosity 크론 잡 등록 (매일 09:00 KST, SOUL.md 로드됨)
 - [x] ML-003 · AGENTS.md, SOUL.md, config.yaml 네이티브 환경 기준으로 업데이트
 
+## Phase 10 — Hermes 행동 교정 + DSPy 완성 (2026-04-26)
+- [x] ML-003 · AGENTS.md 행동 규칙 강화 — 3회 실패 중단, 파일 수정 7단계 절차, git 작성자 규칙
+- [x] ML-003 · AGENTS.md 에이전트 설정 변경 후 검증 체크리스트 추가 (systemctl→journalctl→grep)
+- [x] ML-014 · DSPy dataset.json 네이티브 환경 재작성 (37 케이스, must_not_contain 버그 수정)
+- [x] ML-014 · evaluate.py: enable_thinking=False, max_tokens=4096, load_signature() 통합
+- [x] ML-014 · optimize.py: Docker 시대 하드코딩 제거, load_signature() 사용
+- [x] ML-014 · cron_optimize.py: 전면 재작성 — 네이티브 경로, Hermes git 작성자, config 단일 소스
+- [x] ML-014 · DSPy BootstrapFewShot 최적화 실행 → 78.4% → 86.5%
+- [x] ML-014 · Verified Examples 수동 보완 (회귀 복구 + 미커버 케이스) → **100% (37/37)**
+- [x] PVE-003 · VM 102 Windows 테스트 VM Terraform 코드 작성 (UEFI, TPM, VirtIO)
+
 ## Backlog
 - [x] PVE-004 · Terraform으로 VM 100 코드화 (import → apply, lifecycle ignore_changes 적용)
 - [x] ML-006 · Hermes 스킬 확장 — terminal 툴 확인, AGENTS.md 인프라 컨텍스트 주입
 - [x] GITOPS-003 · KAI Scheduler 제거 — 단일 GPU 추론 클러스터에 불필요, 미사용 확인 후 삭제
+- [ ] PVE-003 · VM 102 Windows 설치 완료 (ISO 다운로드 후 terraform apply + 수동 설치)
 - [ ] K8S-003 · 워커 노드 추가 확장 (물리 머신 확보 시)
 - [ ] ML-007 · 더 큰 모델 검토 (GPU 증설 시 — 현재 계획 없음)
