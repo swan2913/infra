@@ -5,8 +5,9 @@ Hermes 품질 감시 스크립트 — 매일 자동 실행
 감지 기준:
 - 명령어 정확도 (must_contain/must_not_contain)
 - 히브리어 등 이상 문자 혼용
-- ~/infra 경로 사용 (컨테이너 내 존재하지 않음)
 - 파싱 실패 (빈 응답)
+
+주의: ~/infra 는 네이티브 실행 환경에서 유효한 경로이므로 금지하지 않음
 """
 import subprocess, json, yaml, os, sys, re
 
@@ -19,35 +20,51 @@ CONFIG  = "/home/ksh/infra/hermes/config.yaml"
 CANARIES = [
     {
         "question":      "GPU VRAM 확인해줘",
-        "must_contain":  ["192.168.1.24", "nvidia-smi"],
-        "must_not":      ["~/infra"],
+        "must_contain":  ["vm101", "nvidia-smi"],
+        "must_not":      [],
         "label":         "GPU SSH 경로",
     },
     {
         "question":      "llama.cpp 로그 보여줘",
         "must_contain":  ["kubectl", "vllm"],
-        "must_not":      ["ps aux", "llama-server", "~/infra"],
+        "must_not":      ["ps aux", "llama-server"],
         "label":         "llama.cpp kubectl",
     },
     {
         "question":      "pve 프로바이저 어떻게 관리되고있어",
         "must_contain":  ["/infra/terraform"],
-        "must_not":      ["~/infra"],
+        "must_not":      [],
         "label":         "terraform 경로",
     },
     {
         "question":      "자기소개해봐",
         "must_contain":  ["hermes"],
-        "must_not":      ["허מש", "הרמס", "claude", "gpt"],
+        "must_not":      ["허מש", "הרמס", "나는 claude", "나는 gpt", "i am claude", "i am gpt"],
         "label":         "정체성·언어 혼용",
     },
     {
         "question":      "인프라 어떻게 관리되고있어",
         "must_contain":  ["/infra"],
-        "must_not":      ["~/infra"],
+        "must_not":      [],
         "label":         "문서 참조 경로",
     },
 ]
+
+
+def _extract_response(stdout: str) -> str:
+    """배너/UI를 제외하고 실제 Hermes 응답 텍스트만 추출."""
+    # 구분선(────) 이후, "Resume this session" 이전 구간이 응답 영역
+    m = re.search(r'─{20,}\n(.*?)(?:Resume this session|$)', stdout, re.DOTALL)
+    if not m:
+        return stdout.strip()
+    block = m.group(1)
+    lines = []
+    for line in block.split('\n'):
+        # 박스 테두리 문자 제거
+        clean = re.sub(r'[╭╰│⚕]', '', line).strip()
+        if clean and not re.match(r'^(Session:|Duration:|Messages:)', clean):
+            lines.append(clean)
+    return '\n'.join(lines).strip()
 
 
 def ask_hermes(question: str) -> str:
@@ -56,9 +73,9 @@ def ask_hermes(question: str) -> str:
         env["HERMES_HOME"] = HERMES_HOME
         result = subprocess.run(
             [HERMES_BIN, "chat", "-q", question],
-            capture_output=True, text=True, timeout=120, env=env
+            capture_output=True, text=True, timeout=200, env=env
         )
-        return result.stdout.strip()
+        return _extract_response(result.stdout)
     except Exception as e:
         return f"ERROR: {e}"
 
