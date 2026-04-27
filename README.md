@@ -14,9 +14,9 @@ GitHub가 단일 원천 — ArgoCD가 자동으로 클러스터에 반영.
   ├─ VM 100: ubuntu-1 (192.168.1.234)
   │    k3s Control Plane / 4코어 / 4GB
   │
-  └─ VM 101: worker-gpu (예정)
+  └─ VM 101: worker-gpu (192.168.1.24)
        k3s Worker / 8코어 / 16GB / RTX 3080 PCIe Passthrough
-       vLLM + Gemma 추론 서버
+       llama.cpp + Carnice-9b-Q6_K 추론 서버
 ```
 
 **GitOps 흐름**
@@ -26,7 +26,7 @@ git push → GitHub (swan2913/infra)
            k3s 클러스터
                ├─ gpu-operator    Synced ✓
                ├─ kai-scheduler   Synced ✓
-               └─ vllm            대기 중 (워커 노드 추가 후)
+               └─ vllm            Synced ✓ (llama.cpp, Carnice-9b-Q6_K)
 ```
 
 ---
@@ -38,7 +38,7 @@ git push → GitHub (swan2913/infra)
 | PVE 웹 UI | https://192.168.1.94:8006 |
 | VM SSH | `ssh vm100` |
 | ArgoCD UI | https://192.168.1.234:30443 |
-| vLLM API | http://\<워커IP\>:30800 (배포 후) |
+| llama.cpp API | http://192.168.1.24:30800 |
 
 ---
 
@@ -72,6 +72,6 @@ infra/
 | NVIDIA Driver | 580.126.09 | VM 100 |
 | GPU Operator | v26.3.1 | Synced |
 | KAI Scheduler | v0.5.4 | Synced |
-| vLLM + Gemma | - | 워커 노드 대기 중 |
+| llama.cpp + Carnice-9b-Q6_K | v0.3.5 | Running (http://192.168.1.24:30800) |
 
 → 체크리스트: [docs/CHECKLIST.md](docs/CHECKLIST.md)

@@ -15,10 +15,11 @@ RTX 3080 10GB VRAM에서 CUDA Out of Memory 에러가 발생했다.
 | 1차 | google/gemma-3-4b-it | BF16 | OOM (vLLM overhead 포함 시 초과) |
 | 2차 | Carnice-9b AWQ W8A16 | vLLM AWQ | OOM (9B W8A16 ~9GB + overhead) |
 | 3차 | Carnice-9b-Q4_K_M.gguf | llama.cpp | **성공** (5.3GB, 여유 있음) |
+| 4차 | Carnice-9b-Q6_K.gguf | llama.cpp | **현재 운영** (7.3GB, 품질↑) |
 
-### 해결: llama.cpp GGUF Q4_K_M
+### 해결: llama.cpp GGUF Q6_K
 
-- GGUF Q4_K_M 양자화: 9B 파라미터 모델을 5.3GB로 압축
+- GGUF Q6_K 양자화: 9B 파라미터 모델을 7.3GB로 압축 (Q4_K_M 대비 품질 향상)
 - llama.cpp는 vLLM보다 VRAM 오버헤드가 적음
 - KV 캐시도 Q4_0으로 양자화해 VRAM 추가 절약
 
@@ -38,14 +39,14 @@ ghcr.io/ggml-org/llama.cpp:server-cuda
 | 항목 | 값 |
 |------|-----|
 | HuggingFace 리포 | `kai-os/Carnice-9b-GGUF` |
-| 파일명 | `Carnice-9b-Q4_K_M.gguf` |
-| 크기 | 5.3GB |
-| 양자화 | Q4_K_M (4-bit, K-quant) |
+| 파일명 | `Carnice-9b-Q6_K.gguf` |
+| 크기 | 7.3GB |
+| 양자화 | Q6_K (6-bit, K-quant) |
 
 ### 서버 실행 인자
 
 ```
---model /models/Carnice-9b-Q4_K_M.gguf
+--model /models/Carnice-9b-Q6_K.gguf
 --n-gpu-layers 999          # 모든 레이어 GPU 오프로드
 --host 0.0.0.0
 --port 8000
@@ -133,7 +134,7 @@ curl http://192.168.1.24:30800/health
 curl http://192.168.1.24:30800/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "Carnice-9b-Q4_K_M.gguf",
+    "model": "Carnice-9b-Q6_K.gguf",
     "messages": [{"role": "user", "content": "안녕하세요!"}]
   }'
 ```

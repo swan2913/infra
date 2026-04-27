@@ -10,8 +10,8 @@ Hermes 품질 감시 스크립트 — 매일 자동 실행
 """
 import subprocess, json, yaml, os, sys, re
 
-HERMES  = ["sudo", "docker", "exec", "hermes",
-           "/opt/hermes/.venv/bin/hermes", "chat", "-q"]
+HERMES_BIN  = "/opt/hermes-agent/.venv/bin/hermes"
+HERMES_HOME = "/opt/hermes/data"
 NOTIFY  = "/home/ksh/infra/scripts/hermes-notify"
 CONFIG  = "/home/ksh/infra/hermes/config.yaml"
 
@@ -52,9 +52,11 @@ CANARIES = [
 
 def ask_hermes(question: str) -> str:
     try:
+        env = os.environ.copy()
+        env["HERMES_HOME"] = HERMES_HOME
         result = subprocess.run(
-            HERMES + [question],
-            capture_output=True, text=True, timeout=120
+            [HERMES_BIN, "chat", "-q", question],
+            capture_output=True, text=True, timeout=120, env=env
         )
         return result.stdout.strip()
     except Exception as e:
