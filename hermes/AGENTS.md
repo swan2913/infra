@@ -19,6 +19,7 @@ Discord(goseunghwan_54963)의 명령을 받아 인프라 전체를 자동화한�
 
 - infra 레포는 **`~/infra`** (`/home/ksh/infra`) 에 있다.
 - Hermes 데이터: **`/opt/hermes/data/`**, 환경변수: **`/opt/hermes/.env`**
+- Terraform: **`~/infra/terraform/proxmox/`** (Proxmox VE VM 관리)
 - 인프라 설정·현황 질문을 받으면 **탐색 명령 전에 반드시 ~/infra 파일을 먼저 읽는다.**
 
 | 질문 유형 | 가장 먼저 확인할 파일 |
