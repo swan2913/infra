@@ -213,3 +213,50 @@ resource "terraform_data" "windows_test_virtio_iso" {
     command = "sudo qm set 102 --ide3 local:iso/virtio-win.iso,media=cdrom"
   }
 }
+
+# VM 103 — 새로운 우분투 테스트 노드
+resource "proxmox_virtual_environment_vm" "ubuntu_test" {
+  name      = "ubuntu-test-103"
+  node_name = "pve"
+  vm_id     = 103
+
+  machine = "q35"
+
+  cpu {
+    cores   = 2
+    sockets = 1
+    type    = "host"
+  }
+
+  memory {
+    dedicated = 2048  # 2GB
+  }
+
+  disk {
+    datastore_id = "local-lvm"
+    interface    = "virtio0"
+    size         = 20
+  }
+
+  network_device {
+    bridge  = "vmbr0"
+    model   = "virtio"
+    firewall = false
+  }
+
+  operating_system {
+    type = "l26"
+  }
+
+  vga {
+    type = "virtio"
+  }
+
+  boot_order = ["virtio0", "scsi0"]
+  on_boot    = true
+  started    = true
+
+  lifecycle {
+    ignore_changes = [disk[0].file_id]
+  }
+}
